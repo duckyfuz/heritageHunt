@@ -1,10 +1,12 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Text } from "react-native-paper";
 import { GiftedChat } from "react-native-gifted-chat";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
+import { Card } from "react-native-paper";
+import { View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 function giftedToGPT(inputData) {
   inputData.push({ text: rafflesStatue, user: { _id: 1 }, _id: 1 });
@@ -20,10 +22,12 @@ function giftedToGPT(inputData) {
 }
 
 const Converse = ({ route, navigation }) => {
-  useEffect(() => {
-    console.log(route.params.character);
-  });
+  const isKeyboardVisible = useKeyboardVisible();
   const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    // console.log(isKeyboardVisible);
+  });
 
   const handleSend = async (newMessages = []) => {
     console.log(process);
@@ -97,13 +101,16 @@ const Converse = ({ route, navigation }) => {
   };
 
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={(newMessages) => handleSend(newMessages)}
-      user={{
-        _id: 1,
-      }}
-    />
+    <View style={{ flex: 1, marginBottom: isKeyboardVisible ? 0 : 25 }}>
+      <GiftedChat
+        style={{}}
+        messages={messages}
+        onSend={(newMessages) => handleSend(newMessages)}
+        user={{
+          _id: 1,
+        }}
+      />
+    </View>
   );
 };
 

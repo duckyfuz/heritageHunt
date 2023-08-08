@@ -52,9 +52,13 @@ export default function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <StatusBar style="auto" />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Navigator" component={BottomTabs} />
-          <Stack.Screen name="Converse" component={Converse} />
+        <Stack.Navigator>
+          <Stack.Group screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Navigator" component={BottomTabs} />
+          </Stack.Group>
+          <Stack.Group screenOptions={{ presentation: "modal" }}>
+            <Stack.Screen name="Converse" component={Converse} />
+          </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
