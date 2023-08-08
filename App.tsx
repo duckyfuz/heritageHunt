@@ -6,6 +6,11 @@ import { StatusBar } from "expo-status-bar";
 import { ConverseScreen, IdentificationScreen, RouteScreen } from "./screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { createStackNavigator } from "@react-navigation/stack";
+import Converse from "./screens/Converse";
+
+const Stack = createStackNavigator();
+
 const BottomTabs = () => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -47,7 +52,10 @@ export default function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <StatusBar style="auto" />
-        <BottomTabs />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Navigator" component={BottomTabs} />
+          <Stack.Screen name="Converse" component={Converse} />
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );
