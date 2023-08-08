@@ -6,6 +6,19 @@ import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
 
+function giftedToGPT(inputData) {
+  inputData.push({ text: rafflesStatue, user: { _id: 1 }, _id: 1 });
+  console.log(inputData);
+  const messages = inputData.reverse().map((item) => {
+    return {
+      role: item.user.name === "Statue" ? "system" : "user",
+      content: item.text,
+    };
+  });
+
+  return messages;
+}
+
 const ConverseScreen = () => {
   const [messages, setMessages] = useState([]);
 
@@ -34,14 +47,21 @@ const ConverseScreen = () => {
         );
         return;
       }
+      // console.log(messages);
+
+      let messagesss = giftedToGPT(messages);
+      messagesss.push({
+        role: "user",
+        content: userMessage.text,
+      });
+      console.log(messagesss);
+
       const response = await axios.post(
-        "https://api.openai.com/v1/completions",
+        "https://api.openai.com/v1/chat/completions",
         {
-          model: "text-davinci-003",
-          prompt: `${rafflesStatue} Now, answer this question: ${messageText} Speak in the first person`,
-          max_tokens: 500,
-          temperature: 0.2,
-          n: 1,
+          model: "gpt-3.5-turbo",
+          messages: messagesss,
+          max_tokens: 100,
         },
         {
           headers: {
@@ -50,9 +70,10 @@ const ConverseScreen = () => {
           },
         }
       );
+
       console.log(response.data);
 
-      const answer = response.data.choices[0].text.trim();
+      const answer = response.data.choices[0].message.content.trim();
       const botMessage = {
         _id: Math.floor(Math.random() * 10000),
         text: answer,
