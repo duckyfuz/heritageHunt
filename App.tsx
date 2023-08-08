@@ -1,5 +1,4 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
 import { BottomNavigation } from "react-native-paper";
 
 import { NavigationContainer } from "@react-navigation/native";

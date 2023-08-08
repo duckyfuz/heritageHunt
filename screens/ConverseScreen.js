@@ -6,25 +6,11 @@ import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-const openai = axios.create({
-  baseURL: "https://api.openai.com/v1",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${OPENAI_API_KEY}`,
-  },
-});
-
-const rafflesPrompt = "";
-
-// const CHATGPT_API_URL =
-//   "https://api.openai.com/v1/engines/davinci-codex/completions";
-
 const ConverseScreen = () => {
   const [messages, setMessages] = useState([]);
 
   const handleSend = async (newMessages = []) => {
+    console.log(process);
     try {
       const userMessage = newMessages[0];
 
@@ -53,14 +39,14 @@ const ConverseScreen = () => {
         {
           model: "text-davinci-003",
           prompt: `${rafflesStatue} Now, answer this question: ${messageText} Speak in the first person`,
-          max_tokens: 1200,
+          max_tokens: 500,
           temperature: 0.2,
           n: 1,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
           },
         }
       );
