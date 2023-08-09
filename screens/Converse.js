@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
 import { Card } from "react-native-paper";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
@@ -101,7 +101,12 @@ const Converse = ({ route, navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, marginBottom: isKeyboardVisible ? 0 : 25 }}>
+    <View
+      style={{
+        flex: 1,
+        marginBottom: isKeyboardVisible || Platform.OS === "android" ? 0 : 25,
+      }}
+    >
       <GiftedChat
         style={{}}
         messages={messages}
