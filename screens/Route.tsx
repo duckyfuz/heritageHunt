@@ -158,7 +158,7 @@ const Route = () => {
       <Card style={styles.details}>
         <Card.Content style={{ height: "80%" }}>
           {markers?.map((marker: MarkerObject, index: number) => {
-            return <Text>{marker.title}</Text>;
+            return <Text key={index}>{marker.title}</Text>;
           })}
         </Card.Content>
         <Card.Actions>
