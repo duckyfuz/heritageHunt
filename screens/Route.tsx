@@ -1,9 +1,10 @@
 import * as Location from "expo-location";
 import { Card, Text, FAB, Button } from "react-native-paper";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 
 import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 
 type LocationObject = {
   latitude: number;
@@ -92,15 +93,32 @@ const Route = () => {
   };
 
   useEffect(() => {
-    // Fetch location initially
     fetchLocation();
-    // Set up an interval to fetch location every 5 seconds
     const interval = setInterval(fetchLocation, 5000);
-    // Clear the interval when the component unmounts
     return () => {
       clearInterval(interval);
     };
   }, []);
+
+  const handlePoiClick = (e: any) => {
+    // console.log(e.nativeEvent);
+    const marker: MarkerObject = {
+      latlng: {
+        latitude: e.nativeEvent.coordinate.latitude,
+        longitude: e.nativeEvent.coordinate.longitude,
+      },
+      title: e.nativeEvent.name,
+      description: e.nativeEvent.placeId,
+      image: undefined,
+    };
+    setMarkers(
+      Array.from(markers ? new Set([...markers, marker]) : new Set([marker]))
+    );
+  };
+
+  const createRouteHandler = () => {
+    console.log(markers);
+  };
 
   return (
     <View style={styles.container}>
@@ -124,22 +142,7 @@ const Route = () => {
             initialRegion={location}
             onRegionChange={this.onRegionChange}
             onPoiClick={(e) => {
-              console.log(e.nativeEvent);
-              const marker: MarkerObject = {
-                latlng: {
-                  latitude: e.nativeEvent.coordinate.latitude,
-                  longitude: e.nativeEvent.coordinate.longitude,
-                },
-                title: e.nativeEvent.name,
-                description: e.nativeEvent.placeId,
-                image: undefined,
-              };
-              setMarkers(
-                Array.from(
-                  markers ? new Set([...markers, marker]) : new Set([marker])
-                )
-              );
-              console.log(markers);
+              handlePoiClick(e);
             }}
           >
             {markers?.map((marker: MarkerObject, index: number) => {
@@ -155,22 +158,14 @@ const Route = () => {
           </MapView>
         )}
       </View>
-      <Card style={styles.details}>
-        <Card.Content style={{ height: "80%" }}>
+      <View style={styles.details}>
+        <ScrollView>
           {markers?.map((marker: MarkerObject, index: number) => {
             return <Text key={index}>{marker.title}</Text>;
           })}
-        </Card.Content>
-        <Card.Actions>
-          <Button
-            onPress={() => {
-              console.log("Create route");
-            }}
-          >
-            Create Route
-          </Button>
-        </Card.Actions>
-      </Card>
+        </ScrollView>
+        <Button onPress={createRouteHandler}>Create Route</Button>
+      </View>
     </View>
   );
 };
@@ -187,6 +182,7 @@ const styles = StyleSheet.create({
   },
   details: {
     flex: 0.8,
+    paddingBottom: Platform.OS === "android" ? 4 : 25,
   },
   fab: {
     position: "absolute",
