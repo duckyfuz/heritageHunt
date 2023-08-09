@@ -1,5 +1,5 @@
-import RouteScreen from "./RouteScreen";
+import RoutesScreen from "./RoutesScreen";
 import ConverseScreen from "./ConverseScreen";
 import IdentificationScreen from "./IdentificationScreen";
 
-export { RouteScreen, ConverseScreen, IdentificationScreen };
+export { RoutesScreen, ConverseScreen, IdentificationScreen };

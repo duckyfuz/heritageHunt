@@ -3,11 +3,12 @@ import { BottomNavigation } from "react-native-paper";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { ConverseScreen, IdentificationScreen, RouteScreen } from "./screens";
+import { ConverseScreen, IdentificationScreen, RoutesScreen } from "./screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import Converse from "./screens/Converse";
+import Route from "./screens/Route";
 
 const Stack = createStackNavigator();
 
@@ -27,8 +28,8 @@ const BottomTabs = () => {
       unfocusedIcon: "camera-marker-outline",
     },
     {
-      key: "route",
-      title: "route",
+      key: "routes",
+      title: "routes",
       focusedIcon: "map",
       unfocusedIcon: "map-outline",
     },
@@ -36,7 +37,7 @@ const BottomTabs = () => {
   const renderScene = BottomNavigation.SceneMap({
     converse: ConverseScreen,
     identification: IdentificationScreen,
-    route: RouteScreen,
+    routes: RoutesScreen,
   });
   return (
     <BottomNavigation
@@ -58,6 +59,7 @@ export default function App() {
           </Stack.Group>
           <Stack.Group screenOptions={{ presentation: "modal" }}>
             <Stack.Screen name="Converse" component={Converse} />
+            <Stack.Screen name="Route" component={Route} />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>

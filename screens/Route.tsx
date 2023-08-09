@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Text } from "react-native-paper";
+import { Button, FAB, Text } from "react-native-paper";
 import MapView from "react-native-maps";
 import { View, StyleSheet } from "react-native";
 
@@ -20,7 +20,7 @@ type LocationObject = {
   timestamp: number;
 };
 
-const RouteScreen = () => {
+const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<any | null>(null);
 
@@ -46,6 +46,11 @@ const RouteScreen = () => {
 
   return (
     <View style={styles.container}>
+      <FAB
+        icon="map-marker-radius"
+        style={styles.fab}
+        onPress={() => console.log("Pressed")}
+      />
       {location && (
         <MapView
           style={styles.map}
@@ -57,12 +62,11 @@ const RouteScreen = () => {
           }}
         />
       )}
-      <Button>Location</Button>
     </View>
   );
 };
 
-export default RouteScreen;
+export default Route;
 
 const styles = StyleSheet.create({
   container: {
@@ -70,5 +74,12 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: -1,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
