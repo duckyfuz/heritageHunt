@@ -4,7 +4,7 @@ import { Text } from "react-native-paper";
 const IdentificationScreen = () => {
   return (
     <SafeAreaView>
-      <Text>IdentificationScreen</Text>
+      <Text variant="headlineLarge">ReID Prototype</Text>
     </SafeAreaView>
   );
 };
