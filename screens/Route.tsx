@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import { Card, Text, FAB } from "react-native-paper";
+import { Card, Text, FAB, Button } from "react-native-paper";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { View, StyleSheet } from "react-native";
 
@@ -110,7 +110,7 @@ const Route = () => {
           style={styles.fab}
           onPress={() => {
             console.log(location);
-            _mapView.animateToRegion(location);
+            _mapView.animateToRegion(location, 500);
           }}
         />
         {location && (
@@ -122,10 +122,55 @@ const Route = () => {
             provider={PROVIDER_GOOGLE}
             customMapStyle={MapStyle}
             initialRegion={location}
-          />
+            onRegionChange={this.onRegionChange}
+            onPoiClick={(e) => {
+              console.log(e.nativeEvent);
+              const marker: MarkerObject = {
+                latlng: {
+                  latitude: e.nativeEvent.coordinate.latitude,
+                  longitude: e.nativeEvent.coordinate.longitude,
+                },
+                title: e.nativeEvent.name,
+                description: e.nativeEvent.placeId,
+                image: undefined,
+              };
+              setMarkers(
+                Array.from(
+                  markers ? new Set([...markers, marker]) : new Set([marker])
+                )
+              );
+              console.log(markers);
+            }}
+          >
+            {markers?.map((marker: MarkerObject, index: number) => {
+              return (
+                <Marker
+                  key={index}
+                  coordinate={marker.latlng}
+                  title={marker.title}
+                  description={marker.description}
+                />
+              );
+            })}
+          </MapView>
         )}
       </View>
-      <Card style={styles.details}></Card>
+      <Card style={styles.details}>
+        <Card.Content style={{ height: "80%" }}>
+          {markers?.map((marker: MarkerObject, index: number) => {
+            return <Text>{marker.title}</Text>;
+          })}
+        </Card.Content>
+        <Card.Actions>
+          <Button
+            onPress={() => {
+              console.log("Create route");
+            }}
+          >
+            Create Route
+          </Button>
+        </Card.Actions>
+      </Card>
     </View>
   );
 };
