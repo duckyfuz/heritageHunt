@@ -1,65 +1,126 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, FAB, Text } from "react-native-paper";
-import MapView from "react-native-maps";
+import * as Location from "expo-location";
+import { FAB } from "react-native-paper";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { View, StyleSheet } from "react-native";
 
-import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 
 type LocationObject = {
-  coords: {
-    accuracy: number | null;
-    altitude: number | null;
-    altitudeAccuracy: number | null;
-    heading: number | null;
-    latitude: number;
-    longitude: number;
-    speed: number | null;
-  };
-  mocked?: boolean | undefined;
-  timestamp: number;
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
 };
+
+const MapStyle = [
+  {
+    featureType: "administrative",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "poi.business",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "poi.medical",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "poi.school",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "poi.sports_complex",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "transit",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+];
+
+type MarkerObject = {
+  latlng: { latitude: number; longitude: number };
+  title: string | undefined;
+  description: string | undefined;
+  image: number | ImageURISource | undefined;
+};
+
+type ImageURISource = { uri?: string | undefined };
 
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
-  const [errorMsg, setErrorMsg] = useState<any | null>(null);
+  const [markers, setMarkers] = useState<Array<MarkerObject> | null>([]);
+
+  const fetchLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+    let newLocation = await Location.getCurrentPositionAsync({});
+    setLocation({
+      latitude: newLocation.coords.latitude,
+      longitude: newLocation.coords.longitude,
+      latitudeDelta: 0.003,
+      longitudeDelta: 0.003,
+    });
+  };
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let newLocation = await Location.getCurrentPositionAsync({});
-      setLocation(newLocation);
-    })();
+    // Fetch location initially
+    fetchLocation();
+    // Set up an interval to fetch location every 5 seconds
+    const interval = setInterval(fetchLocation, 5000);
+    // Clear the interval when the component unmounts
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
 
   return (
     <View style={styles.container}>
       <FAB
         icon="map-marker-radius"
         style={styles.fab}
-        onPress={() => console.log("Pressed")}
+        onPress={() => {
+          console.log(location);
+          _mapView.animateToRegion(location);
+        }}
       />
       {location && (
         <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.003,
-            longitudeDelta: 0.003,
+          ref={(ref) => {
+            _mapView = ref;
           }}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={MapStyle}
+          style={styles.map}
+          initialRegion={location}
         />
       )}
     </View>
