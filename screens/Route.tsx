@@ -140,6 +140,16 @@ const Route = () => {
     return mappedArray;
   };
 
+  function generateGoogleMapsURL(coordinates: [number, number][]): string {
+    const baseUrl = "https://www.google.com/maps/dir/";
+
+    const waypoints = coordinates
+      .map((coord) => coord.reverse().join(","))
+      .join("/");
+
+    return `${baseUrl}${waypoints}/@${coordinates[0][1]},${coordinates[0][0]},15z/data=!3m1!4b1!4m2!4m1!3e2`;
+  }
+
   const createRouteHandler = () => {
     const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
     const apiUrl = "https://api.geoapify.com/v1/routeplanner";
@@ -170,13 +180,13 @@ const Route = () => {
         },
       })
       .then((response) => {
-        // console.log(response.data.properties);
-        // console.log(response.data.features[0].properties.waypoints);
         let waypoints = [];
         for (const latlng of response.data.features[0].properties.waypoints) {
           latlng.location && waypoints.push(latlng.location);
         }
         console.log(waypoints);
+        const googleMapsURL = generateGoogleMapsURL(waypoints);
+        console.log(googleMapsURL);
       })
       .catch((error) => {
         console.error(error);
