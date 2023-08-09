@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import { FAB } from "react-native-paper";
+import { Card, Text, FAB } from "react-native-paper";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { View, StyleSheet } from "react-native";
 
@@ -104,25 +104,28 @@ const Route = () => {
 
   return (
     <View style={styles.container}>
-      <FAB
-        icon="map-marker-radius"
-        style={styles.fab}
-        onPress={() => {
-          console.log(location);
-          _mapView.animateToRegion(location);
-        }}
-      />
-      {location && (
-        <MapView
-          ref={(ref) => {
-            _mapView = ref;
+      <View style={styles.map}>
+        <FAB
+          icon="map-marker-radius"
+          style={styles.fab}
+          onPress={() => {
+            console.log(location);
+            _mapView.animateToRegion(location);
           }}
-          provider={PROVIDER_GOOGLE}
-          customMapStyle={MapStyle}
-          style={styles.map}
-          initialRegion={location}
         />
-      )}
+        {location && (
+          <MapView
+            style={styles.map}
+            ref={(ref) => {
+              _mapView = ref;
+            }}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={MapStyle}
+            initialRegion={location}
+          />
+        )}
+      </View>
+      <Card style={styles.details}></Card>
     </View>
   );
 };
@@ -134,12 +137,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
     zIndex: -1,
+  },
+  details: {
+    flex: 0.8,
   },
   fab: {
     position: "absolute",
-    margin: 16,
+    margin: 20,
     right: 0,
     bottom: 0,
   },
