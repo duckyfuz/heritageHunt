@@ -6,6 +6,8 @@ import { View, StyleSheet, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 
+import axios from "axios";
+
 type LocationObject = {
   latitude: number;
   longitude: number;
@@ -116,8 +118,69 @@ const Route = () => {
     );
   };
 
+  const markerToShipments = (markersArray: Array<MarkerObject> | null) => {
+    const pickupDuration = 120; // Duration for pickup and delivery
+
+    if (markersArray === null) {
+      console.log("markers is empty");
+      return;
+    }
+
+    const mappedArray = markersArray.map((item, index) => {
+      return {
+        id: `order_${index + 1}`,
+        pickup: { location_index: 0, duration: pickupDuration },
+        delivery: {
+          location: [item.latlng.longitude, item.latlng.latitude],
+          duration: pickupDuration,
+        },
+      };
+    });
+
+    return mappedArray;
+  };
+
   const createRouteHandler = () => {
-    console.log(markers);
+    const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
+    const apiUrl = "https://api.geoapify.com/v1/routeplanner";
+
+    const body = {
+      mode: "walk",
+      agents: [
+        {
+          start_location: [location?.longitude, location?.latitude],
+          time_windows: [[0, 14400]],
+        },
+      ],
+      shipments: markerToShipments(markers),
+      locations: [
+        {
+          id: "warehouse-0",
+          location: [location?.longitude, location?.latitude],
+        },
+      ],
+      type: "short",
+      traffic: "approximated",
+    };
+
+    axios
+      .post(`${apiUrl}?apiKey=${apiKey}`, body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        // console.log(response.data.properties);
+        // console.log(response.data.features[0].properties.waypoints);
+        let waypoints = [];
+        for (const latlng of response.data.features[0].properties.waypoints) {
+          latlng.location && waypoints.push(latlng.location);
+        }
+        console.log(waypoints);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
