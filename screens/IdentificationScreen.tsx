@@ -5,8 +5,8 @@ import { Text } from "react-native-paper";
 import { Button, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const IdentificationScreen = () => {
-  const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [capturedImage, setCapturedImage] = useState<any>(null);
 
   if (!permission) {
     // Camera permissions are still loading
@@ -25,18 +25,25 @@ const IdentificationScreen = () => {
     );
   }
 
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
+  const takePicHandler = async () => {
+    if (!_camera) return;
+    const photo = await _camera.takePictureAsync();
+    setCapturedImage(photo);
+    console.log(photo);
+  };
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
+      <Camera
+        ref={(ref) => {
+          _camera = ref;
+        }}
+        style={styles.camera}
+        type={CameraType.back}
+      >
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
+          <TouchableOpacity style={styles.button} onPress={takePicHandler}>
+            <Text style={styles.text}>Take Image</Text>
           </TouchableOpacity>
         </View>
       </Camera>

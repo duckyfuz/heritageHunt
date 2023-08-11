@@ -25,14 +25,6 @@ const MapStyle = [
     ],
   },
   {
-    featureType: "poi.business",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
     featureType: "poi.medical",
     stylers: [
       {
@@ -213,7 +205,7 @@ const Route = () => {
             provider={PROVIDER_GOOGLE}
             customMapStyle={MapStyle}
             initialRegion={location}
-            onRegionChange={this.onRegionChange}
+            // onRegionChange={this.onRegionChange}
             onPoiClick={(e) => {
               handlePoiClick(e);
             }}
