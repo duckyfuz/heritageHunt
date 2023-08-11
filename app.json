@@ -31,7 +31,13 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow heritageHunt to use your location."
+          "locationWhenInUsePermission": "heritageHunt needs your location to create routes for you!"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "heritageHunt needs your camera to scan the artifact!"
         }
       ]
     ]
