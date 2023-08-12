@@ -6,6 +6,8 @@ import { View, StyleSheet, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 
+import * as MapStyle from "../utils/mapStyle.json";
+
 import axios from "axios";
 
 type LocationObject = {
@@ -15,53 +17,10 @@ type LocationObject = {
   longitudeDelta: number;
 };
 
-const MapStyle = [
-  {
-    featureType: "administrative",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "poi.medical",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "poi.school",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "poi.sports_complex",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "transit",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-];
-
 type MarkerObject = {
   latlng: { latitude: number; longitude: number };
   title: string | undefined;
-  description: string | undefined;
+  description: string | undefined; // This actually stores the placeId
   image: number | ImageURISource | undefined;
 };
 
@@ -88,7 +47,7 @@ const Route = () => {
 
   useEffect(() => {
     fetchLocation();
-    const interval = setInterval(fetchLocation, 5000);
+    const interval = setInterval(fetchLocation, 10000);
     return () => {
       clearInterval(interval);
     };
@@ -185,6 +144,56 @@ const Route = () => {
       });
   };
 
+  const getPlacesHandler = async () => {
+    try {
+      const response = await axios.get(
+        "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+        {
+          params: {
+            location: `${location.latitude},${location.longitude}`,
+            radius: 250,
+            type: "point_of_interest",
+            keyword: "historical",
+            key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+          },
+        }
+      );
+
+      if (response.data.status === "OK") {
+        const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
+
+        const newMarkers: MarkerObject[] = response.data.results
+          .filter(
+            (result: any) =>
+              result.business_status === "OPERATIONAL" &&
+              result.opening_hours?.open_now === true
+          )
+          .map((result: any) => {
+            return {
+              latlng: {
+                latitude: result.geometry.location.lat,
+                longitude: result.geometry.location.lng,
+              },
+              title: result.name,
+              description: result.place_id, // Saving place_id as description
+              image: result.photos?.[0]?.photo_reference,
+            };
+          });
+
+        setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
+
+        console.log(newMarkers);
+        return newMarkers;
+      } else {
+        console.error("Places API request failed:", response.data.status);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error calling Places API:", error);
+      return [];
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.map}>
@@ -230,6 +239,13 @@ const Route = () => {
           })}
         </ScrollView>
         <Button onPress={createRouteHandler}>Create Route</Button>
+        <Button
+          onPress={() => {
+            getPlacesHandler();
+          }}
+        >
+          Get Places
+        </Button>
       </View>
     </View>
   );
