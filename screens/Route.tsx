@@ -155,6 +155,7 @@ const Route = () => {
             type: "point_of_interest",
             keyword: "historical", // Might want to personalise this
             key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+            opennow: true,
           },
         }
       );
@@ -164,9 +165,8 @@ const Route = () => {
 
         const newMarkers: MarkerObject[] = response.data.results
           .filter(
-            (result: any) =>
-              result.business_status === "OPERATIONAL" &&
-              result.opening_hours?.open_now === true
+            (result: any) => result.business_status === "OPERATIONAL"
+            // && result.opening_hours?.open_now === true
           )
           .map((result: any) => {
             return {
@@ -180,8 +180,15 @@ const Route = () => {
             };
           });
 
-        setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
+        setMarkers((prevMarkers) => {
+          const uniqueNewMarkers = newMarkers.filter((newMarker) => {
+            return !prevMarkers.some(
+              (prevMarker) => prevMarker.description === newMarker.description
+            );
+          });
 
+          return [...prevMarkers, ...uniqueNewMarkers];
+        });
         console.log(newMarkers);
         return newMarkers;
       } else {
