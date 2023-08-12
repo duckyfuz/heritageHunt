@@ -1,34 +1,23 @@
-import * as Location from "expo-location";
-import { Card, Text, FAB, Button } from "react-native-paper";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { View, StyleSheet, Platform } from "react-native";
-
 import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Platform } from "react-native";
+import { Text, FAB, Button, ActivityIndicator } from "react-native-paper";
+
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { ScrollView } from "react-native-gesture-handler";
 
+import * as Location from "expo-location";
+
 import * as MapStyle from "../utils/mapStyle.json";
-
-import axios from "axios";
-
-type LocationObject = {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
-};
-
-type MarkerObject = {
-  latlng: { latitude: number; longitude: number };
-  title: string | undefined;
-  description: string | undefined; // This actually stores the placeId
-  image: number | ImageURISource | undefined;
-};
-
-type ImageURISource = { uri?: string | undefined };
+import {
+  LocationObject,
+  MarkerObject,
+  createRouteHandler,
+  requestPlacesAPI,
+} from "../utils/routeHelpers";
 
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
-  const [markers, setMarkers] = useState<Array<MarkerObject> | null>([]);
+  const [markers, setMarkers] = useState<Array<MarkerObject>>([]);
 
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -54,7 +43,7 @@ const Route = () => {
   }, []);
 
   const handlePoiClick = (e: any) => {
-    // console.log(e.nativeEvent);
+    console.log(e.nativeEvent);
     const marker: MarkerObject = {
       latlng: {
         latitude: e.nativeEvent.coordinate.latitude,
@@ -69,137 +58,16 @@ const Route = () => {
     );
   };
 
-  const markerToShipments = (markersArray: Array<MarkerObject> | null) => {
-    const pickupDuration = 120; // Duration for pickup and delivery
-
-    if (markersArray === null) {
-      console.log("markers is empty");
-      return;
-    }
-
-    const mappedArray = markersArray.map((item, index) => {
-      return {
-        id: `order_${index + 1}`,
-        pickup: { location_index: 0, duration: pickupDuration },
-        delivery: {
-          location: [item.latlng.longitude, item.latlng.latitude],
-          duration: pickupDuration,
-        },
-      };
-    });
-
-    return mappedArray;
-  };
-
-  function generateGoogleMapsURL(coordinates: [number, number][]): string {
-    const baseUrl = "https://www.google.com/maps/dir/";
-
-    const waypoints = coordinates
-      .map((coord) => coord.reverse().join(","))
-      .join("/");
-
-    return `${baseUrl}${waypoints}/@${coordinates[0][1]},${coordinates[0][0]},15z/data=!3m1!4b1!4m2!4m1!3e2`;
+  if (!location) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator animating={true} />
+        <Text style={{ marginTop: 10 }} variant="titleSmall">
+          Fetching location...
+        </Text>
+      </View>
+    );
   }
-
-  const createRouteHandler = () => {
-    const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
-    const apiUrl = "https://api.geoapify.com/v1/routeplanner";
-
-    const body = {
-      mode: "walk",
-      agents: [
-        {
-          start_location: [location?.longitude, location?.latitude],
-          time_windows: [[0, 14400]],
-        },
-      ],
-      shipments: markerToShipments(markers),
-      locations: [
-        {
-          id: "warehouse-0",
-          location: [location?.longitude, location?.latitude],
-        },
-      ],
-      type: "short",
-      traffic: "approximated",
-    };
-
-    axios
-      .post(`${apiUrl}?apiKey=${apiKey}`, body, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        let waypoints = [];
-        for (const latlng of response.data.features[0].properties.waypoints) {
-          latlng.location && waypoints.push(latlng.location);
-        }
-        console.log(waypoints);
-        const googleMapsURL = generateGoogleMapsURL(waypoints);
-        console.log(googleMapsURL);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const getPlacesHandler = async () => {
-    try {
-      const response = await axios.get(
-        "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-        {
-          params: {
-            location: `${location.latitude},${location.longitude}`,
-            radius: 250,
-            type: "point_of_interest",
-            keyword: "historical", // Might want to personalise this
-            key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-            opennow: true,
-          },
-        }
-      );
-
-      if (response.data.status === "OK") {
-        const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
-
-        const newMarkers: MarkerObject[] = response.data.results
-          .filter(
-            (result: any) => result.business_status === "OPERATIONAL"
-            // && result.opening_hours?.open_now === true
-          )
-          .map((result: any) => {
-            return {
-              latlng: {
-                latitude: result.geometry.location.lat,
-                longitude: result.geometry.location.lng,
-              },
-              title: result.name,
-              description: result.place_id, // Saving place_id as description
-              image: result.photos?.[0]?.photo_reference,
-            };
-          });
-
-        setMarkers((prevMarkers) => {
-          const uniqueNewMarkers = newMarkers.filter((newMarker) => {
-            return !prevMarkers.some(
-              (prevMarker) => prevMarker.description === newMarker.description
-            );
-          });
-
-          return [...prevMarkers, ...uniqueNewMarkers];
-        });
-        console.log(newMarkers);
-        return newMarkers;
-      } else {
-        console.error("Places API request failed:", response.data.status);
-        return [];
-      }
-    } catch (error) {
-      console.error("Error calling Places API:", error);
-      return [];
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -212,32 +80,30 @@ const Route = () => {
             _mapView.animateToRegion(location, 500);
           }}
         />
-        {location && (
-          <MapView
-            style={styles.map}
-            ref={(ref) => {
-              _mapView = ref;
-            }}
-            provider={PROVIDER_GOOGLE}
-            customMapStyle={MapStyle}
-            initialRegion={location}
-            // onRegionChange={this.onRegionChange}
-            onPoiClick={(e) => {
-              handlePoiClick(e);
-            }}
-          >
-            {markers?.map((marker: MarkerObject, index: number) => {
-              return (
-                <Marker
-                  key={index}
-                  coordinate={marker.latlng}
-                  title={marker.title}
-                  description={marker.description}
-                />
-              );
-            })}
-          </MapView>
-        )}
+        <MapView
+          style={styles.map}
+          ref={(ref) => {
+            _mapView = ref;
+          }}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={MapStyle}
+          initialRegion={location}
+          // onRegionChange={this.onRegionChange}
+          onPoiClick={(e) => {
+            handlePoiClick(e);
+          }}
+        >
+          {markers?.map((marker: MarkerObject, index: number) => {
+            return (
+              <Marker
+                key={index}
+                coordinate={marker.latlng}
+                title={marker.title}
+                description={marker.description}
+              />
+            );
+          })}
+        </MapView>
       </View>
       <View style={styles.details}>
         <ScrollView>
@@ -245,14 +111,33 @@ const Route = () => {
             return <Text key={index}>{marker.title}</Text>;
           })}
         </ScrollView>
-        <Button onPress={createRouteHandler}>Create Route</Button>
-        <Button
-          onPress={() => {
-            getPlacesHandler();
-          }}
-        >
-          Get Places
-        </Button>
+        <View style={styles.buttonsContainer}>
+          <Button
+            mode="contained-tonal"
+            onPress={async () => {
+              const newMarkers = await requestPlacesAPI(location);
+              setMarkers((prevMarkers) => {
+                const uniqueNewMarkers = newMarkers.filter((newMarker) => {
+                  return !prevMarkers.some(
+                    (prevMarker) =>
+                      prevMarker.description === newMarker.description
+                  );
+                });
+                return [...prevMarkers, ...uniqueNewMarkers];
+              });
+            }}
+          >
+            Suggest POIs
+          </Button>
+          <Button
+            mode="contained"
+            onPress={() => {
+              createRouteHandler(location, markers);
+            }}
+          >
+            Create Route
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -261,6 +146,12 @@ const Route = () => {
 export default Route;
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -277,5 +168,12 @@ const styles = StyleSheet.create({
     margin: 20,
     right: 0,
     bottom: 0,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    marginHorizontal: 60,
   },
 });
