@@ -153,7 +153,7 @@ const Route = () => {
             location: `${location.latitude},${location.longitude}`,
             radius: 250,
             type: "point_of_interest",
-            keyword: "historical",
+            keyword: "historical", // Might want to personalise this
             key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
           },
         }
