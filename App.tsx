@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BottomNavigation } from "react-native-paper";
+import { BottomNavigation, Button, Text } from "react-native-paper";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
@@ -58,7 +58,15 @@ export default function App() {
             <Stack.Screen name="Navigator" component={BottomTabs} />
           </Stack.Group>
           <Stack.Group screenOptions={{ presentation: "modal" }}>
-            <Stack.Screen name="Converse" component={Converse} />
+            <Stack.Screen
+              name="Converse"
+              component={Converse}
+              options={({ navigation, route }) => ({
+                headerTitle: () => <Text>Loading...</Text>,
+                // Add a placeholder button without the `onPress` to avoid flicker
+                headerRight: () => <Button>Start Quiz</Button>,
+              })}
+            />
             <Stack.Screen name="Route" component={Route} />
           </Stack.Group>
         </Stack.Navigator>

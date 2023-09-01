@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
-import { Card } from "react-native-paper";
+import { Button, Card, Text } from "react-native-paper";
 import { Platform, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
@@ -26,8 +26,23 @@ const Converse = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // console.log(isKeyboardVisible);
-  });
+    navigation.setOptions({
+      headerTitle: () => <Text>{route.params.character}</Text>,
+      headerRight: () => (
+        <Button
+          onPress={() => {
+            console.log("Quiz Starting");
+          }}
+          // mode="contained"
+          buttonColor="#00000000"
+          // rippleColor={"#00000000"}
+          style={{ borderRadius: 10, marginRight: 10 }}
+        >
+          Start Quiz
+        </Button>
+      ),
+    });
+  }, [navigation]);
 
   const handleSend = async (newMessages = []) => {
     console.log(process);
