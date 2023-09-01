@@ -23,7 +23,7 @@ const requestPlacesAPI = async (location: LocationObject) => {
       {
         params: {
           location: `${location.latitude},${location.longitude}`,
-          radius: 250,
+          radius: 250, // Turn this into a variable to adjust distance
           type: "point_of_interest",
           keyword: "historical", // Might want to personalise this
           key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,

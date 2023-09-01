@@ -34,6 +34,7 @@ const Route = () => {
     });
   };
 
+  // Continuously check the location of user
   useEffect(() => {
     fetchLocation();
     const interval = setInterval(fetchLocation, 10000);
