@@ -10,12 +10,19 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Converse from "./screens/Converse";
 import Route from "./screens/Route";
 import Quiz from "./screens/Quiz";
+import HomeScreen from "./screens/HomeScreen";
 
 const Stack = createStackNavigator();
 
 const BottomTabs = () => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
+    {
+      key: "home",
+      title: "home",
+      focusedIcon: "map",
+      unfocusedIcon: "map-outline",
+    },
     {
       key: "converse",
       title: "converse",
@@ -36,6 +43,7 @@ const BottomTabs = () => {
     },
   ]);
   const renderScene = BottomNavigation.SceneMap({
+    home: HomeScreen,
     converse: ConverseScreen,
     identification: IdentificationScreen,
     routes: RoutesScreen,
