@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { Text, FAB, Button, ActivityIndicator } from "react-native-paper";
+import { View, StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
+import {
+  Text,
+  FAB,
+  Button,
+  ActivityIndicator,
+  TextInput,
+} from "react-native-paper";
 
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { ScrollView } from "react-native-gesture-handler";
@@ -18,6 +24,8 @@ import {
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [markers, setMarkers] = useState<Array<MarkerObject>>([]);
+  const [distance, setDistance] = useState<number>(500);
+  const [time, setTime] = useState<number>(30);
 
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -57,6 +65,46 @@ const Route = () => {
     setMarkers(
       Array.from(markers ? new Set([...markers, marker]) : new Set([marker]))
     );
+  };
+
+  const suggestPOIs = async () => {
+    if (location) {
+      const newMarkers = await requestPlacesAPI(location, distance);
+      setMarkers((prevMarkers) => {
+        const uniqueNewMarkers = newMarkers.filter((newMarker) => {
+          return !prevMarkers.some(
+            (prevMarker) => prevMarker.description === newMarker.description
+          );
+        });
+        return [...prevMarkers, ...uniqueNewMarkers];
+      });
+    } else {
+      console.log("Cannot fetch location.");
+    }
+  };
+
+  const onChangeDistance = (distance: string) => {
+    let newText = "";
+    let numbers = "0123456789";
+
+    for (var i = 0; i < distance.length; i++) {
+      if (numbers.indexOf(distance[i]) > -1) {
+        newText = newText + distance[i];
+      }
+    }
+    setDistance(Number(newText));
+  };
+
+  const onChangeTime = (duration: string) => {
+    let newText = "";
+    let numbers = "0123456789";
+
+    for (var i = 0; i < duration.length; i++) {
+      if (numbers.indexOf(duration[i]) > -1) {
+        newText = newText + duration[i];
+      }
+    }
+    setTime(Number(newText));
   };
 
   if (!location) {
@@ -107,33 +155,42 @@ const Route = () => {
         </MapView>
       </View>
       <View style={styles.details}>
+        <View style={styles.textContainer}>
+          <TextInput
+            mode="outlined"
+            label="Distance"
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={(num) => onChangeDistance(num)}
+            value={distance.toString()}
+            maxLength={4} //setting limit of input
+            right={<TextInput.Affix text="m" />}
+          />
+          <TextInput
+            mode="outlined"
+            label="Duration"
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={(num) => onChangeTime(num)}
+            value={time.toString()}
+            maxLength={3} //setting limit of input
+            right={<TextInput.Affix text="min" />}
+          />
+        </View>
         <ScrollView>
           {markers?.map((marker: MarkerObject, index: number) => {
             return <Text key={index}>{marker.title}</Text>;
           })}
         </ScrollView>
         <View style={styles.buttonsContainer}>
-          <Button
-            mode="contained-tonal"
-            onPress={async () => {
-              const newMarkers = await requestPlacesAPI(location);
-              setMarkers((prevMarkers) => {
-                const uniqueNewMarkers = newMarkers.filter((newMarker) => {
-                  return !prevMarkers.some(
-                    (prevMarker) =>
-                      prevMarker.description === newMarker.description
-                  );
-                });
-                return [...prevMarkers, ...uniqueNewMarkers];
-              });
-            }}
-          >
+          <Button mode="contained-tonal" onPress={suggestPOIs}>
             Suggest POIs
           </Button>
           <Button
+            disabled={markers.length === 0 ? true : false}
             mode="contained"
             onPress={() => {
-              createRouteHandler(location, markers);
+              createRouteHandler(location, markers, time);
             }}
           >
             Create Route
@@ -161,7 +218,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   details: {
-    flex: 0.8,
+    flex: 1.6,
     paddingBottom: Platform.OS === "android" ? 4 : 25,
   },
   fab: {
@@ -176,5 +233,18 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     marginHorizontal: 60,
+    margin: 10,
+  },
+  textContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    marginHorizontal: 40,
+    margin: 10,
+  },
+  textInput: {
+    width: 160,
+    height: 35,
   },
 });

@@ -16,14 +16,14 @@ type MarkerObject = {
 
 type ImageURISource = { uri?: string | undefined };
 
-const requestPlacesAPI = async (location: LocationObject) => {
+const requestPlacesAPI = async (location: LocationObject, distance: number) => {
   try {
     const response = await axios.get(
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
       {
         params: {
           location: `${location.latitude},${location.longitude}`,
-          radius: 250, // Turn this into a variable to adjust distance
+          radius: distance, 
           type: "point_of_interest",
           keyword: "historical", // Might want to personalise this
           key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -93,7 +93,8 @@ function generateGoogleMapsURL(coordinates: [number, number][]): string {
 
 const createRouteHandler = (
   location: LocationObject,
-  markers: MarkerObject[]
+  markers: MarkerObject[],
+  time: number
 ) => {
   const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
   const apiUrl = "https://api.geoapify.com/v1/routeplanner";
@@ -103,7 +104,7 @@ const createRouteHandler = (
     agents: [
       {
         start_location: [location?.longitude, location?.latitude],
-        time_windows: [[0, 14400]],
+        time_windows: [[0, time * 60]],
       },
     ],
     shipments: markerToShipments(markers),
