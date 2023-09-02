@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
 import { Button, Card, Text } from "react-native-paper";
-import { Platform, View } from "react-native";
+import { Platform, View, ActivityIndicator } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
@@ -27,10 +27,13 @@ const Converse = ({ route, navigation }) => {
   const isKeyboardVisible = useKeyboardVisible();
   const [messages, setMessages] = useState([]);
 
-  const [quizOutput, setQuizOutput] = useState(''); // Store quiz responses here
+  const [quizOutput, setQuizOutput] = useState(""); // Store quiz responses here
   const [chatHistory, setChatHistory] = useState([]); // Store chat history
 
-  const APIKEY = "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"
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const APIKEY = "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";
 
   useEffect(() => {
     navigation.setOptions({
@@ -38,10 +41,8 @@ const Converse = ({ route, navigation }) => {
       headerRight: () => (
         <Button
           onPress={() => {
-            console.log("Start Quiz")
-            handleStartQuiz()
-            navigation.navigate('Quiz', {passedQuizOutput: quizOutput })
-            
+            setIsLoading(true);
+            handleStartQuiz();
           }}
           // mode="contained"
           buttonColor="#00000000"
@@ -54,10 +55,16 @@ const Converse = ({ route, navigation }) => {
     });
   }, [navigation]);
 
-  const handleSend = async (newMessages = []) => {
+  useEffect(() => {
+    if (quizStarted) {
+      navigation.navigate("Quiz", { passedQuizOutput: quizOutput });
+      setQuizStarted(false);
+    }
+  }, [quizStarted, navigation]);
 
+  const handleSend = async (newMessages = []) => {
     console.log(process);
-    console.log(`Ernest: newMessages = ${newMessages}`)
+    console.log(`Ernest: newMessages = ${newMessages}`);
     try {
       const userMessage = newMessages[0];
 
@@ -126,71 +133,78 @@ const Converse = ({ route, navigation }) => {
 
       setChatHistory((prevHistory) => [
         ...prevHistory,
-        { role: 'user', content: userMessage.text },
-        { role: 'assistant', content: answer },
+        { role: "user", content: userMessage.text },
+        { role: "assistant", content: answer },
       ]);
     } catch (error) {
       console.log(error);
     }
 
     // Append the user's message and ChatGPT's response to the chat history
-
   };
 
   const handleStartQuiz = async () => {
     // Combine the chat history with your "startQuiz" prompt
-    console.log("handleStartQuiz Executing")
-    const combinedPrompt = chatHistory
-      .map((message) => message.content)
-      .join('\n') + '\n\n' + QuizPrompt; // Add your "startQuiz" prompt here
+    console.log("handleStartQuiz Executing");
+    const combinedPrompt =
+      chatHistory.map((message) => message.content).join("\n") +
+      "\n\n" +
+      QuizPrompt; // Add your "startQuiz" prompt here
 
-    console.log(QuizPrompt)
-    console.log(combinedPrompt)
+    console.log(`Input passed to chatGPT: ${combinedPrompt}`);
     try {
       const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
+        "https://api.openai.com/v1/chat/completions",
         {
-          model: 'gpt-3.5-turbo',
+          model: "gpt-3.5-turbo",
           messages: [
-            { role: 'system', content: combinedPrompt }, // Combined prompt
+            { role: "system", content: combinedPrompt }, // Combined prompt
           ],
           max_tokens: 500,
           temperature: 0.1,
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${APIKEY}`, // Replace with your OpenAI API key
           },
         }
       );
       const answer = response.data.choices[0].message.content;
 
-      const lines = answer.split('\n')
-      
+      console.log(`Output from chatGPT: ${answer}`);
+
+      const lines = answer.split("\n").filter((line) => line !== "");
+
+      console.log(`lines: ${lines}`);
+
       //add the questions and options into the quizOutput state
-      quizData = [];
-      for (let i = 0; i < 35; i += 7 )
-      {
-        console.log(i)
+      let quizData = [];
+      for (let i = 0; i < 25; i += 6) {
+        let answerr = lines[i + 5].split(" ");
         const newObj = {
           question: lines[i],
-          options: [lines[i+1], lines[i+2], lines[i+3], lines[i+4]],
-          answer: [lines[i+5]],
-        }
+          options: [lines[i + 1], lines[i + 2], lines[i + 3], lines[i + 4]],
+          answer: answerr[1],
+        };
         quizData.push(newObj);
       }
 
+      quizData.forEach((quizItem, index) => {
+        console.log(`Question ${index + 1}:`);
+        console.log("Question:", quizItem.question);
+        console.log("Options:", quizItem.options);
+        console.log("Answer:", quizItem.answer);
+        console.log("\n"); // Add a newline for readability
+      });
+
       setQuizOutput(quizData);
-      
-      console.log(answer)
-      console.log(lines)
-      console.log(quizData)
-      console.log(quizOutput)
     } catch (error) {
       console.log(error);
     }
 
+    setQuizStarted(true);
+    setIsLoading(false);
   };
 
   return (
@@ -200,14 +214,20 @@ const Converse = ({ route, navigation }) => {
         marginBottom: isKeyboardVisible || Platform.OS === "android" ? 0 : 25,
       }}
     >
-      <GiftedChat
-        style={{}}
-        messages={messages}
-        onSend={(newMessages) => handleSend(newMessages)}
-        user={{
-          _id: 1,
-        }}
-      />
+      {isLoading ? (
+        // Render the loading indicator in the center of the screen
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        // Render the GiftedChat when not loading
+        <GiftedChat
+          style={{}}
+          messages={messages}
+          onSend={(newMessages) => handleSend(newMessages)}
+          user={{
+            _id: 1,
+          }}
+        />
+      )}
     </View>
   );
 };
