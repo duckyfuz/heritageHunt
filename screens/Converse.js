@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
-import { Button, Card, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { Platform, View, ActivityIndicator } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 import { QuizPrompt } from "../prompts/QuizGenerator";

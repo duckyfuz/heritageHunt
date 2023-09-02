@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
-import {
-  Text,
-  FAB,
-  Button,
-  ActivityIndicator,
-  TextInput,
-} from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { ScrollView } from "react-native-gesture-handler";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
