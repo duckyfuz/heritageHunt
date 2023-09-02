@@ -1,0 +1,2 @@
+export const QuizPrompt =
+  "Based on the questions I have asked, can you estimate how knowledgeable I am about you (assuming your persona as raffles and not chatGPT) and generate 5 MCQ question in the following format where Q represents Question and A, B, C and D represents the options to choose from and Answer: represents the answer. Start a new question two lines after the previous question, options and answer. Start every a new option on a new line. Start the answer on a new line";

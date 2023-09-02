@@ -8,6 +8,8 @@ import { Platform, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
+import { QuizPrompt } from "../prompts/QuizGenerator";
+
 function giftedToGPT(inputData) {
   inputData.push({ text: rafflesStatue, user: { _id: 1 }, _id: 1 });
   console.log(inputData);
@@ -25,13 +27,21 @@ const Converse = ({ route, navigation }) => {
   const isKeyboardVisible = useKeyboardVisible();
   const [messages, setMessages] = useState([]);
 
+  const [quizOutput, setQuizOutput] = useState(''); // Store quiz responses here
+  const [chatHistory, setChatHistory] = useState([]); // Store chat history
+
+  const APIKEY = "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"
+
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => <Text>{route.params.character}</Text>,
       headerRight: () => (
         <Button
           onPress={() => {
-            console.log("Quiz Starting");
+            console.log("Start Quiz")
+            handleStartQuiz()
+            navigation.navigate('Quiz', {passedQuizOutput: quizOutput })
+            
           }}
           // mode="contained"
           buttonColor="#00000000"
@@ -45,10 +55,13 @@ const Converse = ({ route, navigation }) => {
   }, [navigation]);
 
   const handleSend = async (newMessages = []) => {
+
     console.log(process);
+    console.log(`Ernest: newMessages = ${newMessages}`)
     try {
       const userMessage = newMessages[0];
 
+      //takes in the previous messages and adds in the current userMessage
       setMessages((prevMessages) =>
         GiftedChat.append(prevMessages, userMessage)
       );
@@ -69,7 +82,7 @@ const Converse = ({ route, navigation }) => {
         );
         return;
       }
-      // console.log(messages);
+      console.log(`Ernest: ${messages}`);
 
       let messagesss = giftedToGPT(messages);
       messagesss.push({
@@ -89,7 +102,7 @@ const Converse = ({ route, navigation }) => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${APIKEY}`,
           },
         }
       );
@@ -110,9 +123,74 @@ const Converse = ({ route, navigation }) => {
       setMessages((prevMessages) =>
         GiftedChat.append(prevMessages, botMessage)
       );
+
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        { role: 'user', content: userMessage.text },
+        { role: 'assistant', content: answer },
+      ]);
     } catch (error) {
       console.log(error);
     }
+
+    // Append the user's message and ChatGPT's response to the chat history
+
+  };
+
+  const handleStartQuiz = async () => {
+    // Combine the chat history with your "startQuiz" prompt
+    console.log("handleStartQuiz Executing")
+    const combinedPrompt = chatHistory
+      .map((message) => message.content)
+      .join('\n') + '\n\n' + QuizPrompt; // Add your "startQuiz" prompt here
+
+    console.log(QuizPrompt)
+    console.log(combinedPrompt)
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: combinedPrompt }, // Combined prompt
+          ],
+          max_tokens: 500,
+          temperature: 0.1,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${APIKEY}`, // Replace with your OpenAI API key
+          },
+        }
+      );
+      const answer = response.data.choices[0].message.content;
+
+      const lines = answer.split('\n')
+      
+      //add the questions and options into the quizOutput state
+      quizData = [];
+      for (let i = 0; i < 35; i += 7 )
+      {
+        console.log(i)
+        const newObj = {
+          question: lines[i],
+          options: [lines[i+1], lines[i+2], lines[i+3], lines[i+4]],
+          answer: [lines[i+5]],
+        }
+        quizData.push(newObj);
+      }
+
+      setQuizOutput(quizData);
+      
+      console.log(answer)
+      console.log(lines)
+      console.log(quizData)
+      console.log(quizOutput)
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   return (
