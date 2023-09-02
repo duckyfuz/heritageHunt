@@ -9,6 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createStackNavigator } from "@react-navigation/stack";
 import Converse from "./screens/Converse";
 import Route from "./screens/Route";
+import Quiz from "./screens/Quiz";
 
 const Stack = createStackNavigator();
 
@@ -68,6 +69,7 @@ export default function App() {
               })}
             />
             <Stack.Screen name="Route" component={Route} />
+            <Stack.Screen name="Quiz" component={Quiz} />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
