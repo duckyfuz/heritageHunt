@@ -15,6 +15,8 @@ function QuizQuestion({ question, options, onSelectOption }) {
           mode="contained"
           style={{ borderRadius: 10, marginBottom: 10 }}
           onPress={() => onSelectOption(option)}
+          contentStyle={{ textAlign: 'left' }}
+          labelStyle={{ textAlign: 'left' }}
         >
           {option}
         </Button>
