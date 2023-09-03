@@ -102,7 +102,7 @@ const Converse = ({ route, navigation }) => {
         {
           model: "gpt-3.5-turbo",
           messages: messagesss,
-          max_tokens: 100,
+          max_tokens: 500,
           temperature: 0.1,
         },
         {
