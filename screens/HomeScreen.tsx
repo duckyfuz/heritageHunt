@@ -8,7 +8,7 @@ import React, {
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
@@ -20,11 +20,13 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
+import PoiBottomSheet from "./PoiItems/PoiBottomSheet";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
 
   const [location, setLocation] = useState<LocationObject | null>(null);
+  const [POI, setPOI] = useState<MarkerObject | null>(null);
 
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,18 +52,19 @@ const HomeScreen = () => {
     };
   }, []);
 
-  // ref
+  // Bottom Sheet Ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  // variables
+  // Botton Sheet snap variables
   const snapPoints = useMemo(() => ["25%", "50%"], []);
 
-  // callbacks
+  // Callbacks for Bottom Sheet
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
+    // setPOI(null);
   }, []);
 
   const handlePoiClick = (e: any) => {
@@ -76,6 +79,7 @@ const HomeScreen = () => {
       image: undefined,
     };
     console.log(marker);
+    setPOI(marker);
     handlePresentModalPress();
   };
 
@@ -146,16 +150,14 @@ const HomeScreen = () => {
               fillColor={"rgba(65, 104, 187, 0.5)"}
             />
           </MapView>
-          <BottomSheetModal
-            ref={bottomSheetModalRef}
-            index={1}
-            snapPoints={snapPoints}
-            onChange={handleSheetChanges}
-          >
-            <View style={styles.contentContainer}>
-              <Text>Awesome 🎉</Text>
-            </View>
-          </BottomSheetModal>
+          {/* {POI && ( */}
+            <PoiBottomSheet
+              bottomSheetModalRef={bottomSheetModalRef}
+              snapPoints={snapPoints}
+              handleSheetChanges={handleSheetChanges}
+              poi={POI}
+            />
+          {/* )} */}
         </View>
       </View>
     </BottomSheetModalProvider>
@@ -183,9 +185,5 @@ const styles = StyleSheet.create({
     margin: 20,
     right: 0,
     bottom: 0,
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center",
   },
 });
