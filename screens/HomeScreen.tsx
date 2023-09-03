@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
 import * as MapStyle from "../utils/mapStyle.json";
 import { LocationObject, MarkerObject } from "../utils/routeHelpers";
 import { useNavigation } from "@react-navigation/native";
+
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -39,6 +50,20 @@ const HomeScreen = () => {
     };
   }, []);
 
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["25%", "50%"], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
   const handlePoiClick = (e: any) => {
     console.log(e.nativeEvent);
     const marker: MarkerObject = {
@@ -51,22 +76,12 @@ const HomeScreen = () => {
       image: undefined,
     };
     console.log(marker);
+    handlePresentModalPress();
   };
 
-  if (!location) {
+  const FloatingButtons = () => {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator animating={true} />
-        <Text style={{ marginTop: 10 }} variant="titleSmall">
-          Fetching location...
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.map}>
+      <>
         <FAB
           icon="map-marker-radius"
           style={styles.fab}
@@ -91,28 +106,59 @@ const HomeScreen = () => {
             navigation.navigate("CommStack");
           }}
         />
-        <MapView
-          style={styles.map}
-          ref={(ref) => {
-            _mapView = ref;
-          }}
-          provider={PROVIDER_GOOGLE}
-          customMapStyle={MapStyle}
-          initialRegion={location}
-          onPoiClick={(e) => {
-            handlePoiClick(e);
-          }}
-        >
-          <Circle
-            center={location}
-            radius={10}
-            strokeWidth={1}
-            strokeColor={"#1a66ff"}
-            fillColor={"rgba(65, 104, 187, 0.5)"}
-          />
-        </MapView>
+      </>
+    );
+  };
+
+  if (!location) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator animating={true} />
+        <Text style={{ marginTop: 10 }} variant="titleSmall">
+          Fetching location...
+        </Text>
       </View>
-    </View>
+    );
+  }
+
+  return (
+    <BottomSheetModalProvider>
+      <View style={styles.container}>
+        <View style={styles.map}>
+          <FloatingButtons />
+          <MapView
+            style={styles.map}
+            ref={(ref) => {
+              _mapView = ref;
+            }}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={MapStyle}
+            initialRegion={location}
+            onPoiClick={(e) => {
+              handlePoiClick(e);
+            }}
+          >
+            <Circle
+              center={location}
+              radius={10}
+              strokeWidth={1}
+              strokeColor={"#1a66ff"}
+              fillColor={"rgba(65, 104, 187, 0.5)"}
+            />
+          </MapView>
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            index={1}
+            snapPoints={snapPoints}
+            onChange={handleSheetChanges}
+          >
+            <View style={styles.contentContainer}>
+              <Text>Awesome 🎉</Text>
+            </View>
+          </BottomSheetModal>
+        </View>
+      </View>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -137,5 +183,9 @@ const styles = StyleSheet.create({
     margin: 20,
     right: 0,
     bottom: 0,
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
   },
 });

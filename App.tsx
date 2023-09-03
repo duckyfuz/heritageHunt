@@ -25,30 +25,17 @@ const BottomTabs = () => {
       focusedIcon: "map",
       unfocusedIcon: "map-outline",
     },
-    // {
-    //   key: "converse",
-    //   title: "converse",
-    //   focusedIcon: "comment-text",
-    //   unfocusedIcon: "comment-text-outline",
-    // },
+
     {
       key: "identification",
       title: "identification",
       focusedIcon: "camera-marker",
       unfocusedIcon: "camera-marker-outline",
     },
-    // {
-    //   key: "routes",
-    //   title: "routes",
-    //   focusedIcon: "map",
-    //   unfocusedIcon: "map-outline",
-    // },
   ]);
   const renderScene = BottomNavigation.SceneMap({
     home: HomeScreen,
-    // converse: ConverseScreen,
     identification: IdentificationScreen,
-    // routes: RoutesScreen,
   });
   return (
     <BottomNavigation
@@ -89,26 +76,28 @@ function CommStack() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <Stack.Navigator>
-          <Stack.Group screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Navigator" component={BottomTabs} />
-          </Stack.Group>
-          <Stack.Group screenOptions={{ presentation: "modal" }}>
-            <Stack.Screen
-              name="RoutesScreen"
-              component={RouteStacks}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CommStack"
-              component={CommStack}
-              options={{ headerShown: false }}
-            />
-          </Stack.Group>
-        </Stack.Navigator>
-      </NavigationContainer>
+      {/* <BottomSheetModalProvider> */}
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <Stack.Navigator>
+            <Stack.Group screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Navigator" component={BottomTabs} />
+            </Stack.Group>
+            <Stack.Group screenOptions={{ presentation: "modal" }}>
+              <Stack.Screen
+                name="RoutesScreen"
+                component={RouteStacks}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="CommStack"
+                component={CommStack}
+                options={{ headerShown: false }}
+              />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      {/* </BottomSheetModalProvider> */}
     </SafeAreaProvider>
   );
 }
