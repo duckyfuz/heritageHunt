@@ -7,7 +7,7 @@ const ConverseScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <SafeAreaView>
+    <>
       <Text variant="headlineLarge">Converse Prototype</Text>
       <Button
         mode="outlined"
@@ -17,7 +17,7 @@ const ConverseScreen = () => {
       >
         Raffles
       </Button>
-    </SafeAreaView>
+    </>
   );
 };
 

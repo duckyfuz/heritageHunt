@@ -14,6 +14,7 @@ import HomeScreen from "./screens/HomeScreen";
 
 const Stack = createStackNavigator();
 const RouteStack = createStackNavigator();
+const QuizStack = createStackNavigator();
 
 const BottomTabs = () => {
   const [index, setIndex] = React.useState(0);
@@ -24,12 +25,12 @@ const BottomTabs = () => {
       focusedIcon: "map",
       unfocusedIcon: "map-outline",
     },
-    {
-      key: "converse",
-      title: "converse",
-      focusedIcon: "comment-text",
-      unfocusedIcon: "comment-text-outline",
-    },
+    // {
+    //   key: "converse",
+    //   title: "converse",
+    //   focusedIcon: "comment-text",
+    //   unfocusedIcon: "comment-text-outline",
+    // },
     {
       key: "identification",
       title: "identification",
@@ -45,7 +46,7 @@ const BottomTabs = () => {
   ]);
   const renderScene = BottomNavigation.SceneMap({
     home: HomeScreen,
-    converse: ConverseScreen,
+    // converse: ConverseScreen,
     identification: IdentificationScreen,
     // routes: RoutesScreen,
   });
@@ -67,6 +68,24 @@ function RouteStacks() {
   );
 }
 
+function CommStack() {
+  return (
+    <QuizStack.Navigator>
+      <QuizStack.Screen name="ConverseScreen" component={ConverseScreen} />
+      <QuizStack.Screen
+        name="Converse"
+        component={Converse}
+        options={({ navigation, route }) => ({
+          headerTitle: () => <Text>Loading...</Text>,
+          // Add a placeholder button without the `onPress` to avoid flicker
+          headerRight: () => <Button>Start Quiz</Button>,
+        })}
+      />
+      <QuizStack.Screen name="Quiz" component={Quiz} />
+    </QuizStack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
@@ -78,22 +97,16 @@ export default function App() {
           </Stack.Group>
           <Stack.Group screenOptions={{ presentation: "modal" }}>
             <Stack.Screen
-              name="Converse"
-              component={Converse}
-              options={({ navigation, route }) => ({
-                headerTitle: () => <Text>Loading...</Text>,
-                // Add a placeholder button without the `onPress` to avoid flicker
-                headerRight: () => <Button>Start Quiz</Button>,
-              })}
-            />
-            <Stack.Screen
               name="RoutesScreen"
               component={RouteStacks}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="Quiz" component={Quiz} />
+            <Stack.Screen
+              name="CommStack"
+              component={CommStack}
+              options={{ headerShown: false }}
+            />
           </Stack.Group>
-          {/* <Stack.Group></Stack.Group> */}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

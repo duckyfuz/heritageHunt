@@ -83,6 +83,14 @@ const HomeScreen = () => {
             navigation.navigate("RoutesScreen");
           }}
         />
+        <FAB
+          icon="fire" // This will be under a POI click
+          style={[styles.fab, { bottom: 150 }]}
+          onPress={() => {
+            console.log(location);
+            navigation.navigate("CommStack");
+          }}
+        />
         <MapView
           style={styles.map}
           ref={(ref) => {
