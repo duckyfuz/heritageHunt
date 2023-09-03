@@ -9,8 +9,8 @@ import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 import { QuizPrompt } from "../prompts/QuizGenerator";
 
-function giftedToGPT(inputData) {
-  inputData.push({ text: rafflesStatue, user: { _id: 1 }, _id: 1 });
+function giftedToGPT(inputData, prompt) {
+  inputData.push({ text: prompt, user: { _id: 1 }, _id: 1 });
   console.log(inputData);
   const messages = inputData.reverse().map((item) => {
     return {
@@ -35,8 +35,9 @@ const Converse = ({ route, navigation }) => {
   const APIKEY = "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";
 
   useEffect(() => {
+    console.log(route.params.character);
     navigation.setOptions({
-      headerTitle: () => <Text>{route.params.character}</Text>,
+      headerTitle: () => <Text>{route.params.character.name}</Text>,
       headerRight: () => (
         <Button
           onPress={() => {
@@ -90,7 +91,7 @@ const Converse = ({ route, navigation }) => {
       }
       console.log(`Ernest: ${messages}`);
 
-      let messagesss = giftedToGPT(messages);
+      let messagesss = giftedToGPT(messages, route.params.character.prompt);
       messagesss.push({
         role: "user",
         content: userMessage.text,

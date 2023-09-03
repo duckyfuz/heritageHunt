@@ -46,7 +46,7 @@ const HomeScreen = () => {
   // Continuously check the location of user
   useEffect(() => {
     fetchLocation();
-    const interval = setInterval(fetchLocation, 2000);
+    const interval = setInterval(fetchLocation, 10000);
     return () => {
       clearInterval(interval);
     };

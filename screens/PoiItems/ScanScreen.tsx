@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
+import { artifactsHash } from "../../utils/artifactsHash";
 
 export default function ScanScreen() {
   const navigation = useNavigation();
@@ -23,7 +24,8 @@ export default function ScanScreen() {
     { type, data }: any // Don't be lazy edit the type here later also
   ) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    navigation.navigate("Converse", { character: artifactsHash[data] });
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
   if (hasPermission === null) {
@@ -47,7 +49,9 @@ export default function ScanScreen() {
         )}
         <Button
           onPress={() =>
-            navigation.navigate("Converse", { character: "rafflesStatue" })
+            navigation.navigate("Converse", {
+              character: artifactsHash["ABC123"],
+            })
           }
         >
           Raffles
