@@ -13,6 +13,7 @@ import Quiz from "./screens/Quiz";
 import HomeScreen from "./screens/HomeScreen";
 
 const Stack = createStackNavigator();
+const RouteStack = createStackNavigator();
 
 const BottomTabs = () => {
   const [index, setIndex] = React.useState(0);
@@ -35,18 +36,18 @@ const BottomTabs = () => {
       focusedIcon: "camera-marker",
       unfocusedIcon: "camera-marker-outline",
     },
-    {
-      key: "routes",
-      title: "routes",
-      focusedIcon: "map",
-      unfocusedIcon: "map-outline",
-    },
+    // {
+    //   key: "routes",
+    //   title: "routes",
+    //   focusedIcon: "map",
+    //   unfocusedIcon: "map-outline",
+    // },
   ]);
   const renderScene = BottomNavigation.SceneMap({
     home: HomeScreen,
     converse: ConverseScreen,
     identification: IdentificationScreen,
-    routes: RoutesScreen,
+    // routes: RoutesScreen,
   });
   return (
     <BottomNavigation
@@ -56,6 +57,15 @@ const BottomTabs = () => {
     />
   );
 };
+
+function RouteStacks() {
+  return (
+    <RouteStack.Navigator>
+      <Stack.Screen name="RoutesScreen" component={RoutesScreen} />
+      <Stack.Screen name="Route" component={Route} />
+    </RouteStack.Navigator>
+  );
+}
 
 export default function App() {
   return (
@@ -76,9 +86,14 @@ export default function App() {
                 headerRight: () => <Button>Start Quiz</Button>,
               })}
             />
-            <Stack.Screen name="Route" component={Route} />
+            <Stack.Screen
+              name="RoutesScreen"
+              component={RouteStacks}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="Quiz" component={Quiz} />
           </Stack.Group>
+          {/* <Stack.Group></Stack.Group> */}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

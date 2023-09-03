@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "react-native-paper";
 
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { ScrollView } from "react-native-gesture-handler";
 
 import * as Location from "expo-location";
@@ -152,6 +152,13 @@ const Route = () => {
               />
             );
           })}
+          <Circle
+            center={location}
+            radius={10}
+            strokeWidth={1}
+            strokeColor={"#1a66ff"}
+            fillColor={"rgba(65, 104, 187, 0.5)"}
+          />
         </MapView>
       </View>
       <View style={styles.details}>

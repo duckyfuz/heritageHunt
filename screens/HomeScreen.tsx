@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
 import * as MapStyle from "../utils/mapStyle.json";
 import { LocationObject, MarkerObject } from "../utils/routeHelpers";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
+
   const [location, setLocation] = useState<LocationObject | null>(null);
 
   const fetchLocation = async () => {
@@ -30,7 +33,7 @@ const HomeScreen = () => {
   // Continuously check the location of user
   useEffect(() => {
     fetchLocation();
-    const interval = setInterval(fetchLocation, 10000);
+    const interval = setInterval(fetchLocation, 2000);
     return () => {
       clearInterval(interval);
     };
@@ -72,6 +75,14 @@ const HomeScreen = () => {
             _mapView.animateToRegion(location, 500);
           }}
         />
+        <FAB
+          icon="run" // Probably wna change this in the future
+          style={[styles.fab, { bottom: 75 }]}
+          onPress={() => {
+            console.log(location);
+            navigation.navigate("RoutesScreen");
+          }}
+        />
         <MapView
           style={styles.map}
           ref={(ref) => {
@@ -83,7 +94,15 @@ const HomeScreen = () => {
           onPoiClick={(e) => {
             handlePoiClick(e);
           }}
-        ></MapView>
+        >
+          <Circle
+            center={location}
+            radius={10}
+            strokeWidth={1}
+            strokeColor={"#1a66ff"}
+            fillColor={"rgba(65, 104, 187, 0.5)"}
+          />
+        </MapView>
       </View>
     </View>
   );
