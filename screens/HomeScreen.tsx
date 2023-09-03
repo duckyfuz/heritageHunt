@@ -151,12 +151,13 @@ const HomeScreen = () => {
             />
           </MapView>
           {/* {POI && ( */}
-            <PoiBottomSheet
-              bottomSheetModalRef={bottomSheetModalRef}
-              snapPoints={snapPoints}
-              handleSheetChanges={handleSheetChanges}
-              poi={POI}
-            />
+          <PoiBottomSheet
+            bottomSheetModalRef={bottomSheetModalRef}
+            snapPoints={snapPoints}
+            handleSheetChanges={handleSheetChanges}
+            poi={POI}
+            navigation={navigation}
+          />
           {/* )} */}
         </View>
       </View>

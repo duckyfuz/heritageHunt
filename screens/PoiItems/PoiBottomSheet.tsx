@@ -1,10 +1,11 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 
 const PoiBottomSheet = (
-  { bottomSheetModalRef, snapPoints, handleSheetChanges, poi }: any // Don't be lazy go and put the correct types later
+  { bottomSheetModalRef, snapPoints, handleSheetChanges, poi, navigation }: any // Don't be lazy go and put the correct types later
 ) => {
   return (
     <BottomSheetModal
@@ -16,12 +17,21 @@ const PoiBottomSheet = (
       {poi ? (
         <View style={styles.contentContainer}>
           <Text>{poi.title}</Text>
+          <Button
+            // disabled={markers.length === 0 ? true : false}
+            mode="contained"
+            onPress={() => {
+              navigation.navigate("CommStack");
+            }}
+          >
+            Scan Identification Code
+          </Button>
         </View>
       ) : (
         <View style={styles.loadingContainer}>
           <ActivityIndicator animating={true} />
           <Text style={{ marginTop: 10 }} variant="titleSmall">
-            Fetching location...
+            Awaiting data...
           </Text>
         </View>
       )}
@@ -41,5 +51,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 5,
+    marginBottom: 20,
   },
 });

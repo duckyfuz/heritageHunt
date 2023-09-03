@@ -39,6 +39,12 @@
         {
           "cameraPermission": "heritageHunt needs your camera to scan the artifact!"
         }
+      ],
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+        }
       ]
     ]
   }

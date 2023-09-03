@@ -11,6 +11,7 @@ import Converse from "./screens/Converse";
 import Route from "./screens/Route";
 import Quiz from "./screens/Quiz";
 import HomeScreen from "./screens/HomeScreen";
+import ScanScreen from "./screens/PoiItems/ScanScreen";
 
 const Stack = createStackNavigator();
 const RouteStack = createStackNavigator();
@@ -58,6 +59,7 @@ function RouteStacks() {
 function CommStack() {
   return (
     <QuizStack.Navigator>
+      <QuizStack.Screen name="ScanScreen" component={ScanScreen} />
       <QuizStack.Screen name="ConverseScreen" component={ConverseScreen} />
       <QuizStack.Screen
         name="Converse"
@@ -77,26 +79,26 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {/* <BottomSheetModalProvider> */}
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <Stack.Navigator>
-            <Stack.Group screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Navigator" component={BottomTabs} />
-            </Stack.Group>
-            <Stack.Group screenOptions={{ presentation: "modal" }}>
-              <Stack.Screen
-                name="RoutesScreen"
-                component={RouteStacks}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="CommStack"
-                component={CommStack}
-                options={{ headerShown: false }}
-              />
-            </Stack.Group>
-          </Stack.Navigator>
-        </NavigationContainer>
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        <Stack.Navigator>
+          <Stack.Group screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Navigator" component={BottomTabs} />
+          </Stack.Group>
+          <Stack.Group screenOptions={{ presentation: "modal" }}>
+            <Stack.Screen
+              name="RoutesScreen"
+              component={RouteStacks}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CommStack"
+              component={CommStack}
+              options={{ headerShown: false }}
+            />
+          </Stack.Group>
+        </Stack.Navigator>
+      </NavigationContainer>
       {/* </BottomSheetModalProvider> */}
     </SafeAreaProvider>
   );
