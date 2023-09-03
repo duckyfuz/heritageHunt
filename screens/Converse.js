@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { rafflesStatue } from "../prompts/rafflesStatue";
 import { Button, Text } from "react-native-paper";
-import { Platform, View, ActivityIndicator } from "react-native";
+import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 import { QuizPrompt } from "../prompts/QuizGenerator";
@@ -215,7 +215,12 @@ const Converse = ({ route, navigation }) => {
     >
       {isLoading ? (
         // Render the loading indicator in the center of the screen
-        <ActivityIndicator size="large" color="#0000ff" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator animating={true} />
+          <Text style={{ marginTop: 10 }} variant="titleSmall">
+            Generating Quiz...
+          </Text>
+        </View>
       ) : (
         // Render the GiftedChat when not loading
         <GiftedChat
@@ -232,3 +237,12 @@ const Converse = ({ route, navigation }) => {
 };
 
 export default Converse;
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
+});

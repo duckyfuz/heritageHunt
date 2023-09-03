@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ScanScreen() {
+  const navigation = useNavigation();
+
   const [hasPermission, setHasPermission] = useState<Boolean | null>(null);
   const [scanned, setScanned] = useState(false);
 
@@ -42,7 +45,13 @@ export default function ScanScreen() {
         {scanned && (
           <Button onPress={() => setScanned(false)}>Scan Again</Button>
         )}
-        
+        <Button
+          onPress={() =>
+            navigation.navigate("Converse", { character: "rafflesStatue" })
+          }
+        >
+          Raffles
+        </Button>
       </View>
     </View>
   );
