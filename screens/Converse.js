@@ -7,19 +7,7 @@ import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 import { QuizPrompt } from "../prompts/QuizGenerator";
-
-function giftedToGPT(inputData, prompt) {
-  inputData.push({ text: prompt, user: { _id: 1 }, _id: 1 });
-  console.log(inputData);
-  const messages = inputData.reverse().map((item) => {
-    return {
-      role: item.user.name === "Statue" ? "system" : "user",
-      content: item.text,
-    };
-  });
-
-  return messages;
-}
+import { banned, giftedToGPT } from "../utils/converseHelpers";
 
 const Converse = ({ route, navigation }) => {
   const isKeyboardVisible = useKeyboardVisible();
@@ -40,8 +28,9 @@ const Converse = ({ route, navigation }) => {
       headerRight: () => (
         <Button
           onPress={() => {
-            setIsLoading(true);
-            handleStartQuiz();
+            // setIsLoading(true);
+            // handleStartQuiz();
+            console.log(chatHistory);
           }}
           // mode="contained"
           buttonColor="#00000000"
@@ -62,90 +51,73 @@ const Converse = ({ route, navigation }) => {
   }, [quizStarted, navigation]);
 
   const handleSend = async (newMessages = []) => {
-    console.log(process);
-    console.log(`Ernest: newMessages = ${newMessages}`);
-    try {
-      const userMessage = newMessages[0];
+    const userMessage = newMessages[0];
+    setMessages((prevMessages) => GiftedChat.append(prevMessages, userMessage));
 
-      //takes in the previous messages and adds in the current userMessage
-      setMessages((prevMessages) =>
-        GiftedChat.append(prevMessages, userMessage)
-      );
-      const messageText = userMessage.text.toLowerCase();
-
-      // This banned words thing does not actl work need to fix in the future sia
-      const banned = ["GPT"]; // Banned words
-      if (banned.some((ban) => messageText.includes(ban))) {
-        const botMessage = {
-          _id: Math.floor(Math.random() * 10000),
-          text: "That's not very nice... Let's start over.",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: "Statue",
-          },
-        };
-        setMessages((prevMessages) =>
-          GiftedChat.append(prevMessages, botMessage)
-        );
-        return;
-      }
-      console.log(`Ernest: ${messages}`);
-
-      let messagesss = giftedToGPT(messages, route.params.character.prompt);
-      messagesss.push({
-        role: "user",
-        content:
-          "Please reply to the following question or statement as if you were an actor playing the character of " +
-          route.params.character.name +
-          ":\n" +
-          userMessage.text,
-      });
-      console.log(messagesss);
-
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-3.5-turbo",
-          messages: messagesss,
-          max_tokens: 500,
-          temperature: 0.1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${APIKEY}`,
-          },
-        }
-      );
-
-      console.log(response.data);
-
-      const answer = response.data.choices[0].message.content.trim();
-      const botMessage = {
+    // Restrict certain words, set a default kinda reply
+    const messageText = userMessage.text.toLowerCase();
+    if (banned.some((ban) => messageText.includes(ban))) {
+      const banReply = {
         _id: Math.floor(Math.random() * 10000),
-        text: answer,
+        text: "That's not very nice... Let's start over.",
         createdAt: new Date(),
         user: {
           _id: 2,
-          name: "Statue",
+          name: "Moderator",
         },
       };
-
-      setMessages((prevMessages) =>
-        GiftedChat.append(prevMessages, botMessage)
-      );
-
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { role: "user", content: userMessage.text },
-        { role: "assistant", content: answer },
-      ]);
-    } catch (error) {
-      console.log(error);
+      setMessages((prevMessages) => GiftedChat.append(prevMessages, banReply));
     }
 
-    // Append the user's message and ChatGPT's response to the chat history
+    // Ceating a new log for GPT
+    const chronoMessages = await giftedToGPT(
+      messages,
+      route.params.character.prompt
+    );
+    chronoMessages.push({
+      role: "user",
+      content:
+        "Please reply to the following question or statement as if you were an actor playing the character of " +
+        route.params.character.name +
+        ":\n" +
+        userMessage.text,
+    });
+
+    // Fetching response from GPT
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: chronoMessages,
+        max_tokens: 500,
+        temperature: 0.1,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${APIKEY}`,
+        },
+      }
+    );
+
+    const reply = response.data.choices[0].message.content.trim();
+    const GPTMessage = {
+      _id: Math.floor(Math.random() * 10000),
+      text: reply,
+      createdAt: new Date(),
+      user: {
+        _id: 2,
+        name: route.params.character.name,
+      },
+    };
+
+    setMessages((prevMessages) => GiftedChat.append(prevMessages, GPTMessage));
+
+    setChatHistory([
+      ...chatHistory,
+      { role: "user", content: userMessage.text },
+      { role: "assistant", content: reply },
+    ]);
   };
 
   const handleStartQuiz = async () => {
