@@ -1,22 +1,22 @@
 import { GiftedChat } from "react-native-gifted-chat";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import { Button, Text } from "react-native-paper";
 import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
-import { banned, giftedToGPT, toConvo } from "../utils/converseHelpers";
+import {
+  banned,
+  callGPT,
+  giftedToGPT,
+  toConvo,
+} from "../utils/converseHelpers";
 
 const Converse = ({ route, navigation }) => {
-  const isKeyboardVisible = useKeyboardVisible();
   const [messages, setMessages] = useState([]);
-
-  const [quizOutput, setQuizOutput] = useState(""); // Store quiz responses here
-
   const [isLoading, setIsLoading] = useState(false);
-
-  const APIKEY = process.env.REACT_APP_OPENAI_API_KEY;
+  
+  const isKeyboardVisible = useKeyboardVisible();
 
   useEffect(() => {
     navigation.setOptions({
@@ -72,22 +72,7 @@ const Converse = ({ route, navigation }) => {
         userMessage.text,
     });
 
-    // Fetching response from GPT
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-3.5-turbo",
-        messages: chronoMessages,
-        max_tokens: 500,
-        temperature: 0.1,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${APIKEY}`,
-        },
-      }
-    );
+    const response = await callGPT(chronoMessages, 500, 0.3);
 
     const reply = response.data.choices[0].message.content.trim();
     const GPTMessage = {
@@ -115,21 +100,8 @@ const Converse = ({ route, navigation }) => {
       formattedChat;
 
     try {
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: combinedPrompt }],
-          max_tokens: 1000,
-          temperature: 0.1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${APIKEY}`,
-          },
-        }
-      );
+      const message = [{ role: "user", content: combinedPrompt }];
+      const response = await callGPT(message, 1000, 0.1);
 
       const answer = response.data.choices[0].message.content;
       const lines = answer.split("\n").filter((line) => line !== "");

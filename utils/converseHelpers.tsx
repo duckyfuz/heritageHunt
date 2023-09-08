@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const banned = ["gpt", "fuck", "llm"];
 
 export function giftedToGPT(inputData: any, prompt: any) {
@@ -40,7 +42,26 @@ export function toConvo(conversationData: any, char: string) {
   conversationData.forEach((item: any) => {
     const role = item.role;
     const content = item.content;
-    formattedConversation += `${role === 'system' ? char : role}: ${content}\n`;
+    formattedConversation += `${role === "system" ? char : role}: ${content}\n`;
   });
   return formattedConversation;
+}
+
+export async function callGPT(messages: any, tokens: Number, temp: Number) {
+  const response = await axios.post(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      model: "gpt-3.5-turbo",
+      messages: messages,
+      max_tokens: tokens,
+      temperature: temp,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+      },
+    }
+  );
+  return response;
 }
