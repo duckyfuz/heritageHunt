@@ -8,6 +8,7 @@ import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 import {
   banned,
   callGPT,
+  createQuizPrompt,
   giftedToGPT,
   toConvo,
 } from "../utils/converseHelpers";
@@ -15,7 +16,7 @@ import {
 const Converse = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const isKeyboardVisible = useKeyboardVisible();
 
   useEffect(() => {
@@ -89,15 +90,10 @@ const Converse = ({ route, navigation }) => {
   };
 
   const handleStartQuiz = async () => {
-    console.log(messages);
-    const formattedChat = toConvo(
-      giftedToGPT(messages, ""),
-      route.params.character.name
+    const combinedPrompt = createQuizPrompt(
+      route.params.character.name,
+      toConvo(giftedToGPT(messages, ""), route.params.character.name)
     );
-
-    const combinedPrompt =
-      `Create a quiz based on the conversation below between a user and the ${route.params.character.name}. Generate 5 MCQ question in the following format where Q: represents Question; A, B, C and D represents the options to choose from; and the answer is given in the following format Answer: A/B/C/D. The options are one line apart and start one line after the question. The answer starts one line after the last option. A new question starts two line after the answer to the last question. Do not add anything other messages or acknowlegements\n` +
-      formattedChat;
 
     try {
       const message = [{ role: "user", content: combinedPrompt }];
@@ -117,7 +113,6 @@ const Converse = ({ route, navigation }) => {
         };
         quizData.push(newObj);
       }
-      // setQuizOutput(quizData);
       navigation.navigate("Quiz", { passedQuizOutput: quizData });
     } catch (error) {
       console.log(error);
