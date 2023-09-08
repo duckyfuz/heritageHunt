@@ -7,14 +7,13 @@ import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
 
 import { QuizPrompt } from "../prompts/QuizGenerator";
-import { banned, giftedToGPT } from "../utils/converseHelpers";
+import { banned, giftedToGPT, toConvo } from "../utils/converseHelpers";
 
 const Converse = ({ route, navigation }) => {
   const isKeyboardVisible = useKeyboardVisible();
   const [messages, setMessages] = useState([]);
 
   const [quizOutput, setQuizOutput] = useState(""); // Store quiz responses here
-  const [chatHistory, setChatHistory] = useState([]); // Store chat history
 
   const [quizStarted, setQuizStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +27,10 @@ const Converse = ({ route, navigation }) => {
       headerRight: () => (
         <Button
           onPress={() => {
-            // setIsLoading(true);
-            // handleStartQuiz();
-            console.log(chatHistory);
+            setIsLoading(true);
+            handleStartQuiz();
           }}
-          // mode="contained"
           buttonColor="#00000000"
-          // rippleColor={"#00000000"}
           style={{ borderRadius: 10, marginRight: 10 }}
         >
           Start Quiz
@@ -43,6 +39,7 @@ const Converse = ({ route, navigation }) => {
     });
   }, [navigation]);
 
+  // Why is this here?
   useEffect(() => {
     if (quizStarted) {
       navigation.navigate("Quiz", { passedQuizOutput: quizOutput });
@@ -62,17 +59,19 @@ const Converse = ({ route, navigation }) => {
         text: "That's not very nice... Let's start over.",
         createdAt: new Date(),
         user: {
-          _id: 2,
+          _id: 3,
           name: "Moderator",
         },
       };
       setMessages((prevMessages) => GiftedChat.append(prevMessages, banReply));
+      return;
     }
 
     // Ceating a new log for GPT
-    const chronoMessages = await giftedToGPT(
+    const chronoMessages = giftedToGPT(
       messages,
-      route.params.character.prompt
+      route.params.character.prompt,
+      route.params.character.name
     );
     chronoMessages.push({
       role: "user",
@@ -112,23 +111,23 @@ const Converse = ({ route, navigation }) => {
     };
 
     setMessages((prevMessages) => GiftedChat.append(prevMessages, GPTMessage));
-
-    setChatHistory([
-      ...chatHistory,
-      { role: "user", content: userMessage.text },
-      { role: "assistant", content: reply },
-    ]);
   };
 
   const handleStartQuiz = async () => {
     // Combine the chat history with your "startQuiz" prompt
     console.log("handleStartQuiz Executing");
-    const combinedPrompt =
-      chatHistory.map((message) => message.content).join("\n") +
-      "\n\n" +
-      QuizPrompt; // Add your "startQuiz" prompt here
 
+    const formattedChat = toConvo(
+      giftedToGPT(messages, ""),
+      route.params.character.name
+    );
+    console.log(formattedChat);
+
+    const combinedPrompt =
+      `Create a quiz based on the conversation below between a user and the ${route.params.character.name}. Generate 5 MCQ question in the following format where Q: represents Question; A, B, C and D represents the options to choose from; and the answer is given in the following format Answer: A/B/C/D. The options are one line apart and start one line after the question. The answer starts one line after the last option. A new question starts two line after the answer to the last question. Do not add anything other messages or acknowlegements\n` +
+      formattedChat;
     console.log(`Input passed to chatGPT: ${combinedPrompt}`);
+
     try {
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -137,7 +136,7 @@ const Converse = ({ route, navigation }) => {
           messages: [
             { role: "system", content: combinedPrompt }, // Combined prompt
           ],
-          max_tokens: 500,
+          max_tokens: 1000,
           temperature: 0.1,
         },
         {
@@ -147,6 +146,7 @@ const Converse = ({ route, navigation }) => {
           },
         }
       );
+      
       const answer = response.data.choices[0].message.content;
 
       console.log(`Output from chatGPT: ${answer}`);
@@ -207,6 +207,7 @@ const Converse = ({ route, navigation }) => {
           onSend={(newMessages) => handleSend(newMessages)}
           user={{
             _id: 1,
+            name: "user",
           }}
         />
       )}
