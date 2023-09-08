@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export const banned = ["gpt", "fuck", "llm"];
+var badList = require("badwords-list");
+export const banned = [...badList.array, "gpt", "fuck", "llm"];
 
 export function giftedToGPT(inputData: any, prompt: any) {
-  // console.log(inputData);
   const filteredData = [];
   let skipNext = false;
 
@@ -33,7 +33,6 @@ export function giftedToGPT(inputData: any, prompt: any) {
       content: item.text,
     };
   });
-  // console.log(messages);
   return messages;
 }
 

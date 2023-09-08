@@ -44,18 +44,22 @@ const Converse = ({ route, navigation }) => {
 
     // Restrict certain words, set a default kinda reply
     const messageText = userMessage.text.toLowerCase();
-    if (banned.some((ban) => messageText.includes(ban))) {
-      const banReply = {
-        _id: Math.floor(Math.random() * 10000),
-        text: "That's not very nice... Let's start over.",
-        createdAt: new Date(),
-        user: {
-          _id: 3,
-          name: "Moderator",
-        },
-      };
-      setMessages((prevMessages) => GiftedChat.append(prevMessages, banReply));
-      return;
+    const wordsInMessage = messageText.split(' ');
+
+    for (const word of wordsInMessage) {
+      if (banned.includes(word)) {
+        const banReply = {
+          _id: Math.floor(Math.random() * 10000),
+          text: "That's not very nice... Let's start over.",
+          createdAt: new Date(),
+          user: {
+            _id: 3,
+            name: "Moderator",
+          },
+        };
+        setMessages((prevMessages) => GiftedChat.append(prevMessages, banReply));
+        return;
+      }
     }
 
     // Ceating a new log for GPT
@@ -97,6 +101,7 @@ const Converse = ({ route, navigation }) => {
 
     try {
       const message = [{ role: "user", content: combinedPrompt }];
+      console.log(message)
       const response = await callGPT(message, 1000, 0.1);
 
       const answer = response.data.choices[0].message.content;
