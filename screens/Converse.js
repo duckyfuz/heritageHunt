@@ -2,7 +2,6 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { rafflesStatue } from "../prompts/charactorPrompts";
 import { Button, Text } from "react-native-paper";
 import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
@@ -32,7 +31,7 @@ const Converse = ({ route, navigation }) => {
   const [quizStarted, setQuizStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const APIKEY = "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";
+  const APIKEY = process.env.REACT_APP_OPENAI_API_KEY;
 
   useEffect(() => {
     console.log(route.params.character);
