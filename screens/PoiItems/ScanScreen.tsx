@@ -50,11 +50,11 @@ export default function ScanScreen() {
         <Button
           onPress={() =>
             navigation.navigate("Converse", {
-              character: artifactsHash["ABC123"],
+              character: artifactsHash["ChIJN21BlAkZ2jERGmrNMLOQQEI"],
             })
           }
         >
-          Raffles
+          This goes to raffles and I will remove this before the demo (probably)
         </Button>
       </View>
     </View>

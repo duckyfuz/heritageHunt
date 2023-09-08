@@ -73,6 +73,8 @@ const Converse = ({ route, navigation }) => {
         GiftedChat.append(prevMessages, userMessage)
       );
       const messageText = userMessage.text.toLowerCase();
+
+      // This banned words thing does not actl work need to fix in the future sia
       const banned = ["GPT"]; // Banned words
       if (banned.some((ban) => messageText.includes(ban))) {
         const botMessage = {
@@ -94,7 +96,11 @@ const Converse = ({ route, navigation }) => {
       let messagesss = giftedToGPT(messages, route.params.character.prompt);
       messagesss.push({
         role: "user",
-        content: userMessage.text,
+        content:
+          "Please reply to the following question or statement as if you were an actor playing the character of " +
+          route.params.character.name +
+          ":\n" +
+          userMessage.text,
       });
       console.log(messagesss);
 
