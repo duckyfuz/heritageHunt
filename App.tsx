@@ -3,7 +3,7 @@ import { BottomNavigation, Button, Text } from "react-native-paper";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { ConverseScreen, IdentificationScreen, RoutesScreen } from "./screens";
+import { IdentificationScreen, RoutesScreen } from "./screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { createStackNavigator } from "@react-navigation/stack";
@@ -60,7 +60,6 @@ function CommStack() {
   return (
     <QuizStack.Navigator>
       <QuizStack.Screen name="ScanScreen" component={ScanScreen} />
-      <QuizStack.Screen name="ConverseScreen" component={ConverseScreen} />
       <QuizStack.Screen
         name="Converse"
         component={Converse}
