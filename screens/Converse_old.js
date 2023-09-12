@@ -1,5 +1,5 @@
 import { GiftedChat } from "react-native-gifted-chat";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button, Text } from "react-native-paper";
 import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
@@ -44,7 +44,7 @@ const Converse = ({ route, navigation }) => {
 
     // Restrict certain words, set a default kinda reply
     const messageText = userMessage.text.toLowerCase();
-    const wordsInMessage = messageText.split(' ');
+    const wordsInMessage = messageText.split(" ");
 
     for (const word of wordsInMessage) {
       if (banned.includes(word)) {
@@ -57,7 +57,9 @@ const Converse = ({ route, navigation }) => {
             name: "Moderator",
           },
         };
-        setMessages((prevMessages) => GiftedChat.append(prevMessages, banReply));
+        setMessages((prevMessages) =>
+          GiftedChat.append(prevMessages, banReply)
+        );
         return;
       }
     }
@@ -101,7 +103,7 @@ const Converse = ({ route, navigation }) => {
 
     try {
       const message = [{ role: "user", content: combinedPrompt }];
-      console.log(message)
+      console.log(message);
       const response = await callGPT(message, 1000, 0.1);
 
       const answer = response.data.choices[0].message.content;
