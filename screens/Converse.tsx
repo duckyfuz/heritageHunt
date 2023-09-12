@@ -1,5 +1,5 @@
 import { GiftedChat } from "react-native-gifted-chat";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Text } from "react-native-paper";
 import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useKeyboardVisible } from "../hooks/useKeyboardVisible";
