@@ -54,7 +54,7 @@ export default function ScanScreen() {
             })
           }
         >
-          This goes to raffles and I will remove this before the demo (probably)
+          Demo only
         </Button>
       </View>
     </View>
