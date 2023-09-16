@@ -100,7 +100,7 @@ const HomeScreen = () => {
           style={[styles.fab, { bottom: 75 + 10 }]}
           onPress={() => {
             console.log(location);
-            navigation.navigate("RoutesScreen");
+            navigation.navigate("RoutesStack");
           }}
         />
       </>

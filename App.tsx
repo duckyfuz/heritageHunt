@@ -50,7 +50,11 @@ const BottomTabs = () => {
 function RouteStacks() {
   return (
     <RouteStack.Navigator>
-      <Stack.Screen name="RoutesScreen" component={RoutesScreen} />
+      <Stack.Screen
+        name="RoutesScreen"
+        component={RoutesScreen}
+        options={{ title: "Culture Trails", headerBackTitle: "Home" }}
+      />
       <Stack.Screen name="Route" component={Route} />
     </RouteStack.Navigator>
   );
@@ -63,9 +67,8 @@ function CommStack() {
       <QuizStack.Screen
         name="Converse"
         component={Converse}
-        options={({ navigation, route }) => ({
+        options={() => ({
           headerTitle: () => <Text>Loading...</Text>,
-          // Add a placeholder button without the `onPress` to avoid flicker
           headerRight: () => <Button>Start Quiz</Button>,
         })}
       />
@@ -86,7 +89,7 @@ export default function App() {
           </Stack.Group>
           <Stack.Group screenOptions={{ presentation: "modal" }}>
             <Stack.Screen
-              name="RoutesScreen"
+              name="RoutesStack"
               component={RouteStacks}
               options={{ headerShown: false }}
             />

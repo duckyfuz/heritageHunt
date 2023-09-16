@@ -11,23 +11,7 @@ import {
   toConvo,
 } from "../utils/converseHelpers";
 
-interface Character {
-  name: string;
-  prompt: string;
-}
-
-interface Route {
-  params: {
-    character: Character;
-  };
-}
-
-interface Props {
-  route: Route;
-  navigation: any;
-}
-
-const Converse: React.FC<Props> = ({ route, navigation }) => {
+const Converse = ({ route, navigation }: any) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
