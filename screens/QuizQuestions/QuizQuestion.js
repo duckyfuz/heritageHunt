@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import {Text } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 
 function QuizQuestion({ question, options, onSelectOption }) {

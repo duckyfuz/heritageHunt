@@ -122,6 +122,7 @@ const Converse = ({ route, navigation }: any) => {
     } catch (error) {
       console.log(error);
     }
+    console.log("Quiz data is collected");
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
