@@ -143,7 +143,6 @@ const HomeScreen = () => {
               fillColor={"rgba(65, 104, 187, 0.5)"}
             />
           </MapView>
-          {/* {POI && ( */}
           <PoiBottomSheet
             bottomSheetModalRef={bottomSheetModalRef}
             snapPoints={snapPoints}
@@ -151,7 +150,6 @@ const HomeScreen = () => {
             poi={POI}
             navigation={navigation}
           />
-          {/* )} */}
         </View>
       </View>
     </BottomSheetModalProvider>

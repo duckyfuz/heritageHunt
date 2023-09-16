@@ -19,7 +19,11 @@ const Converse = ({ route, navigation }: any) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: () => <Text>{route.params.character.name}</Text>,
+      headerTitle: () => (
+        <Text variant="titleMedium" style={{ fontWeight: "600" }}>
+          {route.params.character.name}
+        </Text>
+      ),
       headerRight: () => (
         <Button
           onPress={() => {

@@ -55,7 +55,11 @@ function RouteStacks() {
         component={RoutesScreen}
         options={{ title: "Culture Trails", headerBackTitle: "Home" }}
       />
-      <Stack.Screen name="Route" component={Route} />
+      <Stack.Screen
+        name="Route"
+        component={Route}
+        options={{ title: "Trail Generation", headerBackTitle: "Trails" }}
+      />
     </RouteStack.Navigator>
   );
 }
@@ -63,16 +67,27 @@ function RouteStacks() {
 function CommStack() {
   return (
     <QuizStack.Navigator>
-      <QuizStack.Screen name="ScanScreen" component={ScanScreen} />
+      <QuizStack.Screen
+        name="ScanScreen"
+        component={ScanScreen}
+        options={{ title: "Scanner", headerBackTitle: "Home" }}
+      />
       <QuizStack.Screen
         name="Converse"
         component={Converse}
         options={() => ({
-          headerTitle: () => <Text>Loading...</Text>,
+          title: "Loading...",
           headerRight: () => <Button>Start Quiz</Button>,
         })}
       />
-      <QuizStack.Screen name="Quiz" component={Quiz} />
+      <QuizStack.Screen
+        name="Quiz"
+        component={Quiz}
+        options={() => ({
+          title: "Dyno Quiz",
+          headerBackTitle: "Back",
+        })}
+      />
     </QuizStack.Navigator>
   );
 }
@@ -80,7 +95,6 @@ function CommStack() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      {/* <BottomSheetModalProvider> */}
       <NavigationContainer>
         <StatusBar style="auto" />
         <Stack.Navigator>
@@ -101,7 +115,6 @@ export default function App() {
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
-      {/* </BottomSheetModalProvider> */}
     </SafeAreaProvider>
   );
 }
