@@ -10,6 +10,11 @@ const PoiBottomSheet = ({
   poi,
   navigation,
 }: any) => {
+  function removeAfterFirstLine(text) {
+    const lines = text.split("\n");
+    return lines[0];
+  }
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -19,16 +24,22 @@ const PoiBottomSheet = ({
     >
       {poi ? (
         <View style={styles.contentContainer}>
-          <Text>{poi.title}</Text>
-          <Button
-            // disabled={markers.length === 0 ? true : false}
-            mode="contained"
-            onPress={() => {
-              navigation.navigate("CommStack");
-            }}
-          >
-            Scan Identification Code
-          </Button>
+          <View>
+            <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+              {removeAfterFirstLine(poi.title)}
+            </Text>
+            <Text variant="bodyMedium">Description goes here!</Text>
+          </View>
+          <View style={{ alignItems: "center" }}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                navigation.navigate("CommStack");
+              }}
+            >
+              Scan Identification Code
+            </Button>
+          </View>
         </View>
       ) : (
         <View style={styles.loadingContainer}>
@@ -53,9 +64,10 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
     justifyContent: "space-between",
     marginTop: 5,
     marginBottom: 20,
+    margin: 10,
   },
 });
