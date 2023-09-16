@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-heritagehunt-dev-234150-authRole",
+      "UnauthRoleArn": "arn:aws:iam::650617877251:role/amplify-heritagehunt-dev-234150-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::650617877251:role/amplify-heritagehunt-dev-234150-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-heritagehunt-dev-234150-deployment",
+      "UnauthRoleName": "amplify-heritagehunt-dev-234150-unauthRole",
+      "StackName": "amplify-heritagehunt-dev-234150",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:650617877251:stack/amplify-heritagehunt-dev-234150/8e2030d0-54a7-11ee-87d3-06a873afc1e6",
+      "AmplifyAppId": "d2zizdz2eam34r"
+    },
+    "categories": {
+      "auth": {
+        "heritagehunt6453aa05": {}
+      },
+      "api": {
+        "heritagehunt": {}
+      }
+    }
+  }
+}
