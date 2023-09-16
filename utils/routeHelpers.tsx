@@ -23,7 +23,7 @@ const requestPlacesAPI = async (location: LocationObject, distance: number) => {
       {
         params: {
           location: `${location.latitude},${location.longitude}`,
-          radius: distance, 
+          radius: distance,
           type: "point_of_interest",
           keyword: "historical", // Might want to personalise this
           key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -91,7 +91,7 @@ function generateGoogleMapsURL(coordinates: [number, number][]): string {
   return `${baseUrl}${waypoints}/@${coordinates[0][1]},${coordinates[0][0]},15z/data=!3m1!4b1!4m2!4m1!3e2`;
 }
 
-const createRouteHandler = (
+const createRouteHandler = async (
   location: LocationObject,
   markers: MarkerObject[],
   time: number
@@ -118,24 +118,26 @@ const createRouteHandler = (
     traffic: "approximated",
   };
 
-  axios
-    .post(`${apiUrl}?apiKey=${apiKey}`, body, {
+  try {
+    const response = await axios.post(`${apiUrl}?apiKey=${apiKey}`, body, {
       headers: {
         "Content-Type": "application/json",
       },
-    })
-    .then((response) => {
-      let waypoints = [];
-      for (const latlng of response.data.features[0].properties.waypoints) {
-        latlng.location && waypoints.push(latlng.location);
-      }
-      console.log(waypoints);
-      const googleMapsURL = generateGoogleMapsURL(waypoints);
-      console.log(googleMapsURL);
-    })
-    .catch((error) => {
-      console.error(error);
     });
+
+    const waypoints = [];
+    for (const latlng of response.data.features[0].properties.waypoints) {
+      latlng.location && waypoints.push(latlng.location);
+    }
+
+    const googleMapsURL = generateGoogleMapsURL(waypoints);
+    console.log(googleMapsURL);
+
+    return googleMapsURL; // Return the value here
+  } catch (error) {
+    console.error(error);
+    throw error; // Rethrow the error if needed
+  }
 };
 
 export { LocationObject, MarkerObject, requestPlacesAPI, createRouteHandler };

@@ -14,23 +14,24 @@ function QuizScreen({ route }) {
   const [scoreCounter, setScoreCounter] = useState(0);
   const [endQuiz, setEndQuiz] = useState(false);
 
+  function replaceFirstWord(originalString, newFirstWord) {
+    const words = originalString.split(" ");
+
+    if (words.length >= 2) {
+      words[0] = newFirstWord;
+
+      const newString = words.join(" ");
+
+      return newString;
+    } else {
+      // If there are less than two words, simply return the new first word
+      return newFirstWord;
+    }
+  }
+
   // Use useEffect to update currentQuestion and currentOption when passedQuizOutput changes
   useEffect(() => {
     if (passedQuizOutput && passedQuizOutput.length > 0) {
-      function replaceFirstWord(originalString, newFirstWord) {
-        const words = originalString.split(" ");
-
-        if (words.length >= 2) {
-          words[0] = newFirstWord;
-
-          const newString = words.join(" ");
-
-          return newString;
-        } else {
-          // If there are less than two words, simply return the new first word
-          return newFirstWord;
-        }
-      }
       currentQuestionNumber = questionNumber + 1;
       setCurrentQuestion(
         replaceFirstWord(

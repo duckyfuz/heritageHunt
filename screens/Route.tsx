@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Alert, Linking } from "react-native";
 import {
   Text,
   FAB,
@@ -28,7 +28,7 @@ const Route = () => {
   const [time, setTime] = useState<number>(30);
 
   const fetchLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       console.log("Permission to access location was denied");
       return;
@@ -197,7 +197,10 @@ const Route = () => {
             disabled={markers.length === 0 ? true : false}
             mode="contained"
             onPress={() => {
-              createRouteHandler(location, markers, time);
+              (async () => {
+                const url = await createRouteHandler(location, markers, time);
+                Linking.openURL(url);
+              })();
             }}
           >
             Create Route
