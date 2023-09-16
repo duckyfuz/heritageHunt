@@ -1,4 +1,5 @@
 import React, {
+  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -8,7 +9,7 @@ import React, {
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
@@ -29,12 +30,12 @@ const HomeScreen = () => {
   const [POI, setPOI] = useState<MarkerObject | null>(null);
 
   const fetchLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       console.log("Permission to access location was denied");
       return;
     }
-    let newLocation = await Location.getCurrentPositionAsync({});
+    const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
       latitude: newLocation.coords.latitude,
       longitude: newLocation.coords.longitude,
@@ -67,7 +68,7 @@ const HomeScreen = () => {
     // setPOI(null);
   }, []);
 
-  const handlePoiClick = (e: any) => {
+  const handlePoiClick = (e: SyntheticEvent) => {
     console.log(e.nativeEvent);
     const marker: MarkerObject = {
       latlng: {
@@ -95,8 +96,8 @@ const HomeScreen = () => {
           }}
         />
         <FAB
-          icon="run" // Probably wna change this in the future
-          style={[styles.fab, { bottom: 75 }]}
+          icon="hiking" // Probably wna change this in the future
+          style={[styles.fab, { bottom: 75 + 10 }]}
           onPress={() => {
             console.log(location);
             navigation.navigate("RoutesScreen");
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     margin: 20,
-    right: 0,
-    bottom: 0,
+    left: 0,
+    bottom: 20,
   },
 });
