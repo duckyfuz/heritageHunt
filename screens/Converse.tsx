@@ -122,7 +122,9 @@ const Converse = ({ route, navigation }: any) => {
     } catch (error) {
       console.log(error);
     }
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
