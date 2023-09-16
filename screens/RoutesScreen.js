@@ -15,14 +15,14 @@ const RoutesScreen = () => {
       <TouchableOpacity
         onPress={handlePress}
         activeOpacity={0.6}
-        style={{ marginVertical: 5 }}
+        style={{ marginVertical: 5, minWidth: "95%", maxWidth: "95%" }}
       >
         <Card>
           <Card.Cover
             source={image}
             style={{
-              borderBottomEndRadius: 0,
-              borderBottomStartRadius: 0,
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
               height: 150,
             }}
           />
@@ -38,8 +38,11 @@ const RoutesScreen = () => {
   };
 
   return (
-    <View style={{ margin: 10 }}>
-      <ScrollView style={{ height: "100%" }}>
+    <View style={{}}>
+      <ScrollView
+        style={{ height: "100%" }}
+        contentContainerStyle={{ alignItems: "center" }}
+      >
         <TrailCard
           image={heritage_trail}
           title="CulturAI Trails (Beta)"

@@ -33,10 +33,12 @@ const Route = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    let newLocation = await Location.getCurrentPositionAsync({});
+    // const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      latitude: newLocation.coords.latitude,
-      longitude: newLocation.coords.longitude,
+      // latitude: newLocation.coords.latitude,
+      // longitude: newLocation.coords.longitude,
+      latitude: 1.287722,
+      longitude: 103.850754,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -85,9 +87,9 @@ const Route = () => {
 
   const onChangeDistance = (distance: string) => {
     let newText = "";
-    let numbers = "0123456789";
+    const numbers = "0123456789";
 
-    for (var i = 0; i < distance.length; i++) {
+    for (let i = 0; i < distance.length; i++) {
       if (numbers.indexOf(distance[i]) > -1) {
         newText = newText + distance[i];
       }
@@ -97,9 +99,9 @@ const Route = () => {
 
   const onChangeTime = (duration: string) => {
     let newText = "";
-    let numbers = "0123456789";
+    const numbers = "0123456789";
 
-    for (var i = 0; i < duration.length; i++) {
+    for (let i = 0; i < duration.length; i++) {
       if (numbers.indexOf(duration[i]) > -1) {
         newText = newText + duration[i];
       }
@@ -184,12 +186,12 @@ const Route = () => {
             right={<TextInput.Affix text="min" />}
           />
         </View>
-        <ScrollView>
+        <ScrollView style={{ paddingHorizontal: 15 }}>
           {markers?.map((marker: MarkerObject, index: number) => {
             return <Text key={index}>{marker.title}</Text>;
           })}
         </ScrollView>
-        <View style={styles.buttonsContainer}>
+        <View style={[styles.buttonsContainer, { gap: 15 }]}>
           <Button mode="contained-tonal" onPress={suggestPOIs}>
             Suggest POIs
           </Button>
