@@ -1,12 +1,15 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 
-const PoiBottomSheet = (
-  { bottomSheetModalRef, snapPoints, handleSheetChanges, poi, navigation }: any // Don't be lazy go and put the correct types later
-) => {
+const PoiBottomSheet = ({
+  bottomSheetModalRef,
+  snapPoints,
+  handleSheetChanges,
+  poi,
+  navigation,
+}: any) => {
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}

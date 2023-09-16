@@ -30,8 +30,8 @@ const BottomTabs = () => {
     {
       key: "identification",
       title: "identification",
-      focusedIcon: "camera-marker",
-      unfocusedIcon: "camera-marker-outline",
+      focusedIcon: "account-cowboy-hat",
+      unfocusedIcon: "account-cowboy-hat-outline",
     },
   ]);
   const renderScene = BottomNavigation.SceneMap({

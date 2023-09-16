@@ -1,6 +1,6 @@
 import axios from "axios";
 
-var badList = require("badwords-list");
+const badList = require("badwords-list");
 export const banned = [...badList.array, "gpt", "fuck", "llm"];
 
 export function giftedToGPT(inputData: any, prompt: any) {
