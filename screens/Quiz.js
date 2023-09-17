@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image } from "react-native";
-import { Card, Button, ProgressBar, MD3Colors } from "react-native-paper";
+import { View, Text, Image, StyleSheet } from "react-native";
+import {
+  Card,
+  Button,
+  ProgressBar,
+  MD3Colors,
+  Avatar,
+} from "react-native-paper";
+import heritageHuntLogo from "./QuizQuestions/logo.png";
 
 function QuizScreen({ route }) {
   // Access passedQuizOutput from route.params
@@ -76,135 +83,127 @@ function QuizScreen({ route }) {
     console.log("Hi");
   };
 
+  const styles = StyleSheet.create({
+    button1: {
+      borderWidth: 0,
+      backgroundColor: "#dfe7e8",
+      borderRadius: 7,
+    },
+    buttonCorrect: {
+      borderWidth: 0,
+      backgroundColor: "#38eb91",
+      borderRadius: 7,
+    },
+    buttonWrong: {
+      borderWidth: 0,
+      backgroundColor: "#ed4554",
+      borderRadius: 7,
+    },
+    button1Text: {
+      color: "#2a2b2b",
+      fontSize: 18,
+      alignSelf: "flex-start",
+    },
+  });
+
   return (
     <View
       style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
+        flexDirection: "column",
+        alignItems: "stretch",
+        width: "100%",
+        position: "absolute",
       }}
     >
-      <View
-        style={{
-          padding: 10,
-          position: "absolute",
-          top: 20, // Adjust the distance from the top as needed
-          left: 20, // Adjust the distance from the left as needed
-          width: "90%",
-          alignSelf: "center",
-        }}
-      >
-        <ProgressBar
-          progress={(questionNumber + 1) / passedQuizOutput.length}
-          color={"blue"}
-          style={{ width: "100%" }}
+      {/* Add in heritageHunt Logo */}
+      <View style={{ flex: 1, margin: 10 }}>
+        <Avatar.Image
+          size={75}
+          source={heritageHuntLogo}
+          style={{ padding: 0 }}
         />
       </View>
+      {/* Question */}
       <View
         style={{
-          backgroundColor: isAnswerCorrect === "Correct!" ? "green" : "red",
-          padding: 10,
-          borderRadius: 20,
-          position: "absolute",
-          top: 50, // Adjust the distance from the top as needed
-          left: 20, // Adjust the distance from the left as needed
+          flex: 3,
+          marginLeft: 10,
+          marginTop: 0,
+          marginBottom: 10,
+          marginRight: 10,
         }}
       >
-        <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>
-          Score: {scoreCounter}/5
+        <Text
+          variant="displayLarge"
+          style={{ fontSize: 26, fontWeight: "bold" }}
+        >
+          Will HeritageHunt win cloudhacks 2023?
         </Text>
       </View>
-
-      {/* QuizQuestion */}
-      <View style={{ marginTop: 20, position: "absolute", top: 100 }}>
-        <Card style={{ padding: 20, borderRadius: 10 }}>
-          {/* Display the question */}
-          <Text style={{ fontSize: 18, marginBottom: 20 }}>
-            {currentQuestion}
-          </Text>
-
-          {/* Display the answer options as buttons */}
-          {currentOption.map((currentOption, index) => (
-            <Button
-              key={index}
-              mode="contained"
-              style={{ borderRadius: 10, marginBottom: 10 }}
-              onPress={() => {
-                if (!answerCompleted) {
-                  handleSelectOption(currentOption);
-                } else {
-                  forFun();
-                }
-              }}
-              contentStyle={{ textAlign: "left" }}
-              labelStyle={{ textAlign: "left" }}
+      {/* Questions and options */}
+      <View style={{ flex: 6, marginHorizontal: 10 }}>
+        <Card>
+          <Card.Content>
+            <Text
+              variant="titleLarge"
+              style={{ fontSize: 18, fontWeight: "bold", color: "#6b6868" }}
             >
-              {currentOption}
-            </Button>
-          ))}
-        </Card>
-      </View>
-      {/* Next Question */}
-      {answerCompleted ? (
-        <View style={{ marginTop: 450 }}>
-          <Text
+              Select one
+            </Text>
+          </Card.Content>
+          <Card.Actions
             style={{
-              fontSize: 13,
-              marginBottom: 10,
-              color: isAnswerCorrect === "Correct!" ? "green" : "red",
+              flexDirection: "column",
+              rowGap: 20,
+              width: "100%",
+              alignItems: "stretch",
             }}
-          >{`Your Answer is ${isAnswerCorrect}!`}</Text>
-          {!endQuiz ? (
+          >
             <Button
-              mode="contained"
-              style={{
-                marginBottom: 10,
-                paddingHorizontal: 20, // Add padding to the button
-              }}
-              labelStyle={{ fontSize: 16, fontWeight: "bold" }}
-              onPress={handleNextQuestion}
+              style={styles.button1}
+              labelStyle={styles.button1Text}
+              contentStyle={{ justifyContent: "flex-start" }}
             >
-              Next Question
+              Option 1
             </Button>
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+            <Button
+              style={styles.buttonCorrect}
+              labelStyle={styles.button1Text}
+              contentStyle={{ justifyContent: "flex-start" }}
             >
-              <Text
-                style={{ fontSize: 24, fontWeight: "bold", marginBottom: 5 }}
-              >
-                {`Quiz Score: ${scoreCounter}`}
-              </Text>
-              <Text
-                style={{ fontSize: 24, fontWeight: "bold", marginBottom: 5 }}
-              >
-                Accumulated Score: 94
-              </Text>
+              Correct Option
+            </Button>
+            <Button
+              style={styles.buttonWrong}
+              labelStyle={styles.button1Text}
+              contentStyle={{ justifyContent: "flex-start" }}
+            >
+              Wong Option
+            </Button>
+            <Button
+              style={styles.button1}
+              labelStyle={styles.button1Text}
+              contentStyle={{ justifyContent: "flex-start" }}
+            >
+              Last Option
+            </Button>
+          </Card.Actions>
+        </Card>
 
-              <Image
-                source={require("./QuizQuestions/reward_shop.png")} // Replace with the path to your image
-                style={{ width: 75, height: 75, marginBottom: 0 }}
-              />
-
-              <Button
-                mode="contained"
-                style={{
-                  marginBottom: 10,
-                  paddingHorizontal: 20, // Add padding to the button
-                }}
-                labelStyle={{ fontSize: 16, fontWeight: "bold" }}
-              >
-                Go to Rewards
-              </Button>
-            </View>
-          )}
+        {/*Submit Button */}
+        <View
+          style={{
+            flex: 1,
+            marginLeft: 20,
+            marginRight: 20,
+            marginTop: 30,
+            flexDirection: "column",
+            alignItems: "stretch",
+          }}
+        >
+          <Button mode="contained">Done</Button>
         </View>
-      ) : null}
+      </View>
     </View>
   );
 }
