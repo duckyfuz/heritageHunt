@@ -20,6 +20,19 @@ function QuizScreen({ route }) {
   const [scoreCounter, setScoreCounter] = useState(0);
   const [endQuiz, setEndQuiz] = useState(false);
 
+  // Use useEffect to update currentQuestion and currentOption when passedQuizOutput changes
+  useEffect(() => {
+    if (passedQuizOutput && passedQuizOutput.length > 0) {
+      const currentQuestionNumber = questionNumber + 1;
+      setCurrentQuestion(
+        replaceFirstWord(
+          passedQuizOutput[questionNumber].question,
+          `Q${currentQuestionNumber}:`
+        )
+      );
+      setCurrentOption(passedQuizOutput[questionNumber].options);
+    }
+  }, [passedQuizOutput, questionNumber]);
   function replaceFirstWord(originalString, newFirstWord) {
     const words = originalString.split(" ");
 
@@ -35,20 +48,6 @@ function QuizScreen({ route }) {
     }
   }
 
-  // Use useEffect to update currentQuestion and currentOption when passedQuizOutput changes
-  useEffect(() => {
-    if (passedQuizOutput && passedQuizOutput.length > 0) {
-      const currentQuestionNumber = questionNumber + 1;
-      setCurrentQuestion(
-        replaceFirstWord(
-          passedQuizOutput[questionNumber].question,
-          `Q${currentQuestionNumber}:`
-        )
-      );
-      setCurrentOption(passedQuizOutput[questionNumber].options);
-    }
-  }, [passedQuizOutput, questionNumber]);
-
   const handleSelectOption = (selectedOption) => {
     passedQuizOutput.forEach((quizItem, index) => {
       console.log(`Question ${index + 1}:`);
@@ -59,6 +58,7 @@ function QuizScreen({ route }) {
     });
 
     console.log(selectedOption);
+
     if (selectedOption[0] === passedQuizOutput[questionNumber].answer) {
       setIsAnswerCorrect("Correct!");
       let currentScore = scoreCounter;
@@ -137,10 +137,10 @@ function QuizScreen({ route }) {
           variant="displayLarge"
           style={{ fontSize: 26, fontWeight: "bold" }}
         >
-          Will HeritageHunt win cloudhacks 2023?
+          {currentQuestion}
         </Text>
       </View>
-      {/* Questions and options */}
+      {/*MCQ Options */}
       <View style={{ flex: 6, marginHorizontal: 10 }}>
         <Card>
           <Card.Content>
@@ -157,36 +157,25 @@ function QuizScreen({ route }) {
               rowGap: 20,
               width: "100%",
               alignItems: "stretch",
+              marginBottom: 10,
             }}
           >
-            <Button
-              style={styles.button1}
-              labelStyle={styles.button1Text}
-              contentStyle={{ justifyContent: "flex-start" }}
-            >
-              Option 1
-            </Button>
-            <Button
-              style={styles.buttonCorrect}
-              labelStyle={styles.button1Text}
-              contentStyle={{ justifyContent: "flex-start" }}
-            >
-              Correct Option
-            </Button>
-            <Button
-              style={styles.buttonWrong}
-              labelStyle={styles.button1Text}
-              contentStyle={{ justifyContent: "flex-start" }}
-            >
-              Wong Option
-            </Button>
-            <Button
-              style={styles.button1}
-              labelStyle={styles.button1Text}
-              contentStyle={{ justifyContent: "flex-start" }}
-            >
-              Last Option
-            </Button>
+            {currentOption.map((currentOption, index) => (
+              <Button
+                // Change the style of button to buttonWrong/buttonCorrect if it is correct
+                style={styles.button1}
+                labelStyle={styles.button1Text}
+                contentStyle={{ justifyContent: "flex-start" }}
+                key={index}
+                onPress={() => {
+                  if (!answerCompleted) {
+                    handleSelectOption(currentOption);
+                  }
+                }}
+              >
+                {currentOption}
+              </Button>
+            ))}
           </Card.Actions>
         </Card>
 
