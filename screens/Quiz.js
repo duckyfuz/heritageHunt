@@ -16,9 +16,12 @@ function QuizScreen({ route }) {
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentOption, setCurrentOption] = useState([]);
   const [answerCompleted, setAnswerCompleted] = useState(false);
+  const [answerIndex, setAnswerIndex] = useState(5);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState("");
   const [scoreCounter, setScoreCounter] = useState(0);
   const [endQuiz, setEndQuiz] = useState(false);
+
+  const [buttonColor, setButtonColor] = useState("");
 
   // Use useEffect to update currentQuestion and currentOption when passedQuizOutput changes
   useEffect(() => {
@@ -48,7 +51,7 @@ function QuizScreen({ route }) {
     }
   }
 
-  const handleSelectOption = (selectedOption) => {
+  const handleSelectOption = (selectedOption, index) => {
     passedQuizOutput.forEach((quizItem, index) => {
       console.log(`Question ${index + 1}:`);
       console.log("Question:", quizItem.question);
@@ -59,14 +62,20 @@ function QuizScreen({ route }) {
 
     console.log(selectedOption);
 
+    setAnswerIndex(index);
+
     if (selectedOption[0] === passedQuizOutput[questionNumber].answer) {
       setIsAnswerCorrect("Correct!");
       let currentScore = scoreCounter;
       setScoreCounter((currentScore += 1));
+      //set button to green
+      setButtonColor("#38eb91");
     } else {
       setIsAnswerCorrect(
         `Incorrect, the correct answer is ${passedQuizOutput[questionNumber].answer}`
       );
+      //set button to red
+      setButtonColor("#ed4554");
     }
 
     setAnswerCompleted(true);
@@ -79,19 +88,15 @@ function QuizScreen({ route }) {
     setAnswerCompleted(false);
   };
 
-  const forFun = () => {
-    console.log("Hi");
-  };
-
   const styles = StyleSheet.create({
     button1: {
       borderWidth: 0,
       backgroundColor: "#dfe7e8",
       borderRadius: 7,
     },
-    buttonCorrect: {
+    button2: {
       borderWidth: 0,
-      backgroundColor: "#38eb91",
+      backgroundColor: buttonColor,
       borderRadius: 7,
     },
     buttonWrong: {
@@ -116,13 +121,42 @@ function QuizScreen({ route }) {
       }}
     >
       {/* Add in heritageHunt Logo */}
-      <View style={{ flex: 1, margin: 10 }}>
+      <View
+        style={{
+          flex: 1,
+          margin: 10,
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
         <Avatar.Image
           size={75}
           source={heritageHuntLogo}
           style={{ padding: 0 }}
         />
+        <View
+          style={{
+            backgroundColor: isAnswerCorrect === "Correct!" ? "green" : "red",
+            padding: 10,
+            margin: 10,
+            marginLeft: 140,
+            marginTop: 15,
+            marginBottom: 15,
+            borderRadius: 20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontWeight: "bold",
+            }}
+          >
+            Score: {scoreCounter}/5
+          </Text>
+        </View>
       </View>
+
       {/* Question */}
       <View
         style={{
@@ -163,13 +197,20 @@ function QuizScreen({ route }) {
             {currentOption.map((currentOption, index) => (
               <Button
                 // Change the style of button to buttonWrong/buttonCorrect if it is correct
-                style={styles.button1}
+                style={
+                  !answerCompleted
+                    ? styles.button1
+                    : answerCompleted && answerIndex === index
+                    ? styles.button2
+                    : styles.button1
+                }
                 labelStyle={styles.button1Text}
                 contentStyle={{ justifyContent: "flex-start" }}
                 key={index}
+                id={`btn${index}`}
                 onPress={() => {
                   if (!answerCompleted) {
-                    handleSelectOption(currentOption);
+                    handleSelectOption(currentOption, index);
                   }
                 }}
               >
@@ -179,19 +220,101 @@ function QuizScreen({ route }) {
           </Card.Actions>
         </Card>
 
-        {/*Submit Button */}
-        <View
-          style={{
-            flex: 1,
-            marginLeft: 20,
-            marginRight: 20,
-            marginTop: 30,
-            flexDirection: "column",
-            alignItems: "stretch",
-          }}
-        >
-          <Button mode="contained">Done</Button>
-        </View>
+        {/* Only toggle view when answer is completed */}
+        {answerCompleted ? (
+          <React.Fragment>
+            {/* Question feedback */}
+            <View
+              style={{
+                flex: 1,
+                marginLeft: 20,
+                marginRight: 20,
+                marginTop: 20,
+                flexDirection: "column",
+                alignItems: "stretch",
+              }}
+            >
+              <Text
+                style={{
+                  color: isAnswerCorrect === "Correct!" ? "green" : "red",
+                }}
+              >{`Your Answer is ${isAnswerCorrect}!`}</Text>
+            </View>
+            {!endQuiz ? (
+              //Submit Button
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 20,
+                  marginRight: 20,
+                  marginTop: 30,
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                }}
+              >
+                <Button mode="contained" onPress={handleNextQuestion}>
+                  Done
+                </Button>
+              </View>
+            ) : (
+              //End page screen
+              <React.Fragment>
+                <View
+                  style={{
+                    flex: 1,
+                    marginLeft: 20,
+                    marginRight: 20,
+                    marginTop: 10,
+                    flexDirection: "column",
+                    alignItems: "stretch",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: "bold",
+                      marginBottom: 5,
+                      alignSelf: "center",
+                    }}
+                  >
+                    {`Quiz Score: ${scoreCounter}/5`}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: "bold",
+                      marginBottom: 5,
+                      alignSelf: "center",
+                    }}
+                  >
+                    Lifetime Score: 94
+                  </Text>
+
+                  <Image
+                    source={require("./QuizQuestions/reward_shop.png")} // Replace with the path to your image
+                    style={{
+                      width: 75,
+                      height: 75,
+                      alignSelf: "center",
+                    }}
+                  />
+
+                  <Button
+                    mode="contained"
+                    style={{
+                      marginBottom: 10,
+                      paddingHorizontal: 20, // Add padding to the button
+                    }}
+                    labelStyle={{ fontSize: 16, fontWeight: "bold" }}
+                  >
+                    Go to Rewards
+                  </Button>
+                </View>
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        ) : null}
+        {/*Feedback on the Answer */}
       </View>
     </View>
   );
