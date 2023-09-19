@@ -46,7 +46,7 @@ export function toConvo(conversationData: any, char: string) {
   return formattedConversation;
 }
 
-export async function callGPT(messages: any, tokens: Number, temp: Number) {
+export async function callGPT(messages: any, tokens: number, temp: number) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {

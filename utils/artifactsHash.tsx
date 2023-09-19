@@ -1,4 +1,4 @@
-import { prompts } from "../prompts/charactorPrompts";
+import { prompts } from "./prompts/charactorPrompts";
 
 // Key is the placeID of the item
 export const artifactsHash = {
@@ -12,11 +12,11 @@ export const artifactsHash = {
   },
   ChIJRbqIowkZ2jERitZMRQRGCH0: {
     name: "Dalhousie Obelisk",
-    // prompt: prompts.ChIJRbqIowkZ2jERitZMRQRGCH0,
+    prompt: prompts.ChIJRbqIowkZ2jERitZMRQRGCH0,
     // https://www.visitsingapore.com/see-do-singapore/history/memorials/dalhousie-obelisk/
   },
   ChIJhfB0E3gZ2jERvkYUJPp4gTI: {
     name: "Mirror Balls",
-    // prompt: prompts.ChIJhfB0E3gZ2jERvkYUJPp4gTI,
+    prompt: prompts.ChIJhfB0E3gZ2jERvkYUJPp4gTI,
   },
 };
