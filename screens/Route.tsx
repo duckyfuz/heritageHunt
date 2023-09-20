@@ -37,8 +37,8 @@ const Route = () => {
     setLocation({
       // latitude: newLocation.coords.latitude,
       // longitude: newLocation.coords.longitude,
-      latitude: 1.287722,
-      longitude: 103.850754,
+      latitude: 1.279340,
+      longitude: 103.842120,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
