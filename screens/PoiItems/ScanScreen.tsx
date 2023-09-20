@@ -24,8 +24,9 @@ export default function ScanScreen() {
     { type, data }: any // Don't be lazy edit the type here later also
   ) => {
     setScanned(true);
-    navigation.navigate("Converse", { character: artifactsHash[data] });
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    if (data in artifactsHash) {
+      navigation.navigate("Converse", { character: artifactsHash[data] });
+    } // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
   if (hasPermission === null) {
