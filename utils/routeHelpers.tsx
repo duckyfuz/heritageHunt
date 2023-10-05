@@ -14,6 +14,8 @@ type MarkerObject = {
   image: number | ImageURISource | undefined;
 };
 
+type LocationWaypoints = [[number, number]];
+
 type ImageURISource = { uri?: string | undefined };
 
 const requestPlacesAPI = async (location: LocationObject, distance: number) => {
@@ -130,14 +132,51 @@ const createRouteHandler = async (
       latlng.location && waypoints.push(latlng.location);
     }
 
-    const googleMapsURL = generateGoogleMapsURL(waypoints);
-    console.log(googleMapsURL);
+    return waypoints;
+    // const googleMapsURL = generateGoogleMapsURL(waypoints);
+    // console.log(googleMapsURL);
 
-    return googleMapsURL; // Return the value here
+    // return googleMapsURL; // Return the value here
   } catch (error) {
     console.error(error);
     throw error; // Rethrow the error if needed
   }
 };
 
-export { LocationObject, MarkerObject, requestPlacesAPI, createRouteHandler };
+const createDetailedRoute = async (waypoints: LocationWaypoints) => {
+  const requestBody = waypoints.map(([lat, lon]) => [lon, lat]);
+
+  const formattedWaypoints = requestBody.map((waypoint) => waypoint.join(","));
+  const mode = "walk";
+  const apiUrl = `https://api.geoapify.com/v1/routing?waypoints=${formattedWaypoints.join(
+    "|"
+  )}&mode=${mode}&apiKey=${process.env.REACT_APP_GEOAPIFY_API_KEY}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    // Handle the response data here
+    const tmp: [LocationWaypoints] =
+      response.data.features[0].geometry.coordinates;
+
+    const detailedWaypoints = tmp.map((coordinates) =>
+      coordinates.map((coord) => [coord[1], coord[0]])
+    );
+
+    // console.log(detailedWaypoints);
+
+    return detailedWaypoints;
+  } catch (error) {
+    // Handle any errors here
+    console.error(error);
+    throw error; // Throw the error to propagate it
+  }
+};
+
+export {
+  LocationObject,
+  MarkerObject,
+  requestPlacesAPI,
+  createRouteHandler,
+  createDetailedRoute,
+};

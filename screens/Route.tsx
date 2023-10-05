@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Platform, Alert, Linking } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import {
   Text,
   FAB,
@@ -17,15 +17,20 @@ import * as MapStyle from "../utils/mapStyle.json";
 import {
   LocationObject,
   MarkerObject,
+  createDetailedRoute,
   createRouteHandler,
   requestPlacesAPI,
 } from "../utils/routeHelpers";
+
+import { useNavigation } from "@react-navigation/native";
 
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [markers, setMarkers] = useState<Array<MarkerObject>>([]);
   const [distance, setDistance] = useState<number>(500);
   const [time, setTime] = useState<number>(30);
+
+  const navigation = useNavigation();
 
   const fetchLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -37,8 +42,8 @@ const Route = () => {
     setLocation({
       // latitude: newLocation.coords.latitude,
       // longitude: newLocation.coords.longitude,
-      latitude: 1.279340,
-      longitude: 103.842120,
+      latitude: 1.27934,
+      longitude: 103.84212,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -47,7 +52,7 @@ const Route = () => {
   // Continuously check the location of user
   useEffect(() => {
     fetchLocation();
-    const interval = setInterval(fetchLocation, 10000);
+    const interval = setInterval(fetchLocation, 60000);
     return () => {
       clearInterval(interval);
     };
@@ -107,6 +112,16 @@ const Route = () => {
       }
     }
     setTime(Number(newText));
+  };
+
+  const createRoute = () => {
+    (async () => {
+      const waypoints = await createRouteHandler(location, markers, time);
+      const routeWaypoints = await createDetailedRoute(waypoints);
+      console.log(routeWaypoints);
+
+      navigation.navigate("Navigator", { routeWPs: routeWaypoints });
+    })();
   };
 
   if (!location) {
@@ -198,12 +213,7 @@ const Route = () => {
           <Button
             disabled={markers.length === 0 ? true : false}
             mode="contained"
-            onPress={() => {
-              (async () => {
-                const url = await createRouteHandler(location, markers, time);
-                Linking.openURL(url);
-              })();
-            }}
+            onPress={createRoute}
           >
             Create Route
           </Button>
