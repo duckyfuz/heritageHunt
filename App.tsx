@@ -13,6 +13,9 @@ import Quiz from "./screens/Quiz";
 import HomeScreen from "./screens/HomeScreen";
 import ScanScreen from "./screens/PoiItems/ScanScreen";
 
+import store from "./app/store";
+import { Provider } from "react-redux";
+
 const Stack = createStackNavigator();
 const RouteStack = createStackNavigator();
 const QuizStack = createStackNavigator();
@@ -95,26 +98,28 @@ function CommStack() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <Stack.Navigator>
-          <Stack.Group screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Navigator" component={BottomTabs} />
-          </Stack.Group>
-          <Stack.Group screenOptions={{ presentation: "modal" }}>
-            <Stack.Screen
-              name="RoutesStack"
-              component={RouteStacks}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CommStack"
-              component={CommStack}
-              options={{ headerShown: false }}
-            />
-          </Stack.Group>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <Stack.Navigator>
+            <Stack.Group screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Navigator" component={BottomTabs} />
+            </Stack.Group>
+            <Stack.Group screenOptions={{ presentation: "modal" }}>
+              <Stack.Screen
+                name="RoutesStack"
+                component={RouteStacks}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="CommStack"
+                component={CommStack}
+                options={{ headerShown: false }}
+              />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </SafeAreaProvider>
   );
 }
