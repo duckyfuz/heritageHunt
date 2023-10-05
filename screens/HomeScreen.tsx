@@ -9,7 +9,7 @@ import React, {
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
@@ -23,8 +23,12 @@ import {
 } from "@gorhom/bottom-sheet";
 import PoiBottomSheet from "./PoiItems/PoiBottomSheet";
 
+import { useSelector, useDispatch } from "react-redux";
+import { selectWPs } from "../app/features/counter/counterSlice";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const waypoints = useSelector(selectWPs);
 
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [POI, setPOI] = useState<MarkerObject | null>(null);
@@ -47,7 +51,7 @@ const HomeScreen = () => {
   // Continuously check the location of user
   useEffect(() => {
     fetchLocation();
-    const interval = setInterval(fetchLocation, 10000);
+    const interval = setInterval(fetchLocation, 60000);
     return () => {
       clearInterval(interval);
     };
@@ -93,6 +97,7 @@ const HomeScreen = () => {
           onPress={() => {
             console.log(location);
             _mapView.animateToRegion(location, 500);
+            console.log(waypoints);
           }}
         />
         <FAB
@@ -106,6 +111,39 @@ const HomeScreen = () => {
       </>
     );
   };
+
+  const PolylineComponent: React.FC<PolylineComponentProps> = ({
+    coordinates,
+  }) => {
+    return (
+      <Polyline
+        coordinates={coordinates}
+        strokeColor="#000"
+        strokeColors={[
+          "#7F0000",
+          "#00000000",
+          "#B24112",
+          "#E5845C",
+          "#238C23",
+          "#7F0000",
+        ]}
+        strokeWidth={6}
+      />
+    );
+  };
+
+  const mapToLatLng = (
+    coordinateSet: number[][]
+  ): { latitude: number; longitude: number }[] => {
+    return coordinateSet.map((coordinate) => {
+      const [latitude, longitude] = coordinate;
+      return { latitude, longitude };
+    });
+  };
+
+  interface PolylineComponentProps {
+    coordinates: { latitude: number; longitude: number }[];
+  }
 
   if (!location) {
     return (
@@ -142,6 +180,12 @@ const HomeScreen = () => {
               strokeColor={"#1a66ff"}
               fillColor={"rgba(65, 104, 187, 0.5)"}
             />
+            {waypoints.map((coordinateSet, index) => (
+              <PolylineComponent
+                key={index}
+                coordinates={mapToLatLng(coordinateSet)}
+              />
+            ))}
           </MapView>
           <PoiBottomSheet
             bottomSheetModalRef={bottomSheetModalRef}

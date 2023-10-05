@@ -13,6 +13,9 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import * as Location from "expo-location";
 
+import { useDispatch } from "react-redux";
+import { setWPs } from "../app/features/counter/counterSlice";
+
 import * as MapStyle from "../utils/mapStyle.json";
 import {
   LocationObject,
@@ -31,6 +34,7 @@ const Route = () => {
   const [time, setTime] = useState<number>(30);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const fetchLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -38,12 +42,12 @@ const Route = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    // const newLocation = await Location.getCurrentPositionAsync({});
+    const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      // latitude: newLocation.coords.latitude,
-      // longitude: newLocation.coords.longitude,
-      latitude: 1.27934,
-      longitude: 103.84212,
+      latitude: newLocation.coords.latitude,
+      longitude: newLocation.coords.longitude,
+      // latitude: 1.27934,
+      // longitude: 103.84212,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -118,9 +122,11 @@ const Route = () => {
     (async () => {
       const waypoints = await createRouteHandler(location, markers, time);
       const routeWaypoints = await createDetailedRoute(waypoints);
-      console.log(routeWaypoints);
+      // console.log(routeWaypoints);
 
-      navigation.navigate("Navigator", { routeWPs: routeWaypoints });
+      dispatch(setWPs(routeWaypoints));
+
+      navigation.navigate("Navigator");
     })();
   };
 
