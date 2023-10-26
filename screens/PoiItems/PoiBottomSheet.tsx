@@ -28,7 +28,7 @@ const PoiBottomSheet = ({
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
               {removeAfterFirstLine(poi.title)}
             </Text>
-            <Text variant="bodyMedium">Description goes here!</Text>
+            <Text variant="bodyMedium">{poi.description}</Text>
           </View>
           <View style={{ alignItems: "center" }}>
             <Button
