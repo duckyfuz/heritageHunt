@@ -14,7 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import * as Location from "expo-location";
 
 import { useDispatch } from "react-redux";
-import { setWPs } from "../app/features/counter/counterSlice";
+import { setWPs, setPOIs } from "../app/features/counter/counterSlice";
 
 import * as MapStyle from "../utils/mapStyle.json";
 import {
@@ -42,12 +42,12 @@ const Route = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    const newLocation = await Location.getCurrentPositionAsync({});
+    // const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      latitude: newLocation.coords.latitude,
-      longitude: newLocation.coords.longitude,
-      // latitude: 1.27934,
-      // longitude: 103.84212,
+      // latitude: newLocation.coords.latitude,
+      // longitude: newLocation.coords.longitude,
+      latitude: 1.27934,
+      longitude: 103.84212,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -125,6 +125,7 @@ const Route = () => {
       // console.log(routeWaypoints);
 
       dispatch(setWPs(routeWaypoints));
+      dispatch(setPOIs(markers));
 
       navigation.navigate("Navigator");
     })();

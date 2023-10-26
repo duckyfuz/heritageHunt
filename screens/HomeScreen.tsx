@@ -9,7 +9,7 @@ import React, {
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 
 import * as Location from "expo-location";
 
@@ -23,12 +23,13 @@ import {
 } from "@gorhom/bottom-sheet";
 import PoiBottomSheet from "./PoiItems/PoiBottomSheet";
 
-import { useSelector, useDispatch } from "react-redux";
-import { selectWPs } from "../app/features/counter/counterSlice";
+import { useSelector } from "react-redux";
+import { selectPOIs, selectWPs } from "../app/features/counter/counterSlice";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const waypoints = useSelector(selectWPs);
+  const POIs = useSelector(selectPOIs);
 
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [POI, setPOI] = useState<MarkerObject | null>(null);
@@ -39,10 +40,12 @@ const HomeScreen = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    const newLocation = await Location.getCurrentPositionAsync({});
+    // const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      latitude: newLocation.coords.latitude,
-      longitude: newLocation.coords.longitude,
+      // latitude: newLocation.coords.latitude,
+      // longitude: newLocation.coords.longitude,
+      latitude: 1.27934,
+      longitude: 103.84212,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -119,15 +122,15 @@ const HomeScreen = () => {
       <Polyline
         coordinates={coordinates}
         strokeColor="#000"
-        strokeColors={[
-          "#7F0000",
-          "#00000000",
-          "#B24112",
-          "#E5845C",
-          "#238C23",
-          "#7F0000",
-        ]}
-        strokeWidth={6}
+        // strokeColors={[
+        //   "#7F0000",
+        //   "#00000000",
+        //   "#B24112",
+        //   "#E5845C",
+        //   "#238C23",
+        //   "#7F0000",
+        // ]}
+        strokeWidth={3}
       />
     );
   };
@@ -186,6 +189,16 @@ const HomeScreen = () => {
                 coordinates={mapToLatLng(coordinateSet)}
               />
             ))}
+            {POIs?.map((marker: MarkerObject, index: number) => {
+              return (
+                <Marker
+                  key={index}
+                  coordinate={marker.latlng}
+                  title={marker.title}
+                  description={marker.description}
+                />
+              );
+            })}
           </MapView>
           <PoiBottomSheet
             bottomSheetModalRef={bottomSheetModalRef}
