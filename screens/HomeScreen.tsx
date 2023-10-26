@@ -9,7 +9,12 @@ import React, {
 import { View, StyleSheet } from "react-native";
 import { Text, FAB, ActivityIndicator } from "react-native-paper";
 
-import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {
+  Circle,
+  Marker,
+  Polyline,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 
 import * as Location from "expo-location";
 
@@ -77,13 +82,14 @@ const HomeScreen = () => {
 
   const handlePoiClick = (e: SyntheticEvent) => {
     console.log(e.nativeEvent);
+    console.log(e._targetInst.memoizedProps);
     const marker: MarkerObject = {
       latlng: {
         latitude: e.nativeEvent.coordinate.latitude,
         longitude: e.nativeEvent.coordinate.longitude,
       },
-      title: e.nativeEvent.name,
-      description: e.nativeEvent.placeId,
+      title: e._targetInst.memoizedProps.title,
+      description: e._targetInst.memoizedProps.description,
       image: undefined,
     };
     console.log(marker);
@@ -172,9 +178,9 @@ const HomeScreen = () => {
             provider={PROVIDER_GOOGLE}
             customMapStyle={MapStyle}
             initialRegion={location}
-            onPoiClick={(e) => {
-              handlePoiClick(e);
-            }}
+            // onPoiClick={(e) => {
+            //   handlePoiClick(e);
+            // }}
           >
             <Circle
               center={location}
@@ -196,6 +202,10 @@ const HomeScreen = () => {
                   coordinate={marker.latlng}
                   title={marker.title}
                   description={marker.description}
+                  onPress={(e) => {
+
+                    handlePoiClick(e);
+                  }}
                 />
               );
             })}

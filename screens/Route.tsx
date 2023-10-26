@@ -124,6 +124,9 @@ const Route = () => {
       const routeWaypoints = await createDetailedRoute(waypoints);
       // console.log(routeWaypoints);
 
+      console.log(waypoints);
+      console.log(markers)
+
       dispatch(setWPs(routeWaypoints));
       dispatch(setPOIs(markers));
 
