@@ -30,8 +30,8 @@ import { useNavigation } from "@react-navigation/native";
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [markers, setMarkers] = useState<Array<MarkerObject>>([]);
-  const [distance, setDistance] = useState<number>(500);
-  const [time, setTime] = useState<number>(30);
+  const [distance, setDistance] = useState<number>(800);
+  const [time, setTime] = useState<number>(120);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -42,12 +42,12 @@ const Route = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    // const newLocation = await Location.getCurrentPositionAsync({});
+    const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      // latitude: newLocation.coords.latitude,
-      // longitude: newLocation.coords.longitude,
-      latitude: 1.27934,
-      longitude: 103.84212,
+      latitude: newLocation.coords.latitude,
+      longitude: newLocation.coords.longitude,
+      // latitude: 1.27934,
+      // longitude: 103.84212,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
@@ -125,7 +125,7 @@ const Route = () => {
       // console.log(routeWaypoints);
 
       console.log(waypoints);
-      console.log(markers)
+      console.log(markers);
 
       dispatch(setWPs(routeWaypoints));
       dispatch(setPOIs(markers));
