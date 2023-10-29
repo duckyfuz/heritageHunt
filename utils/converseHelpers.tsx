@@ -67,7 +67,7 @@ export async function callGPT(messages: any, tokens: number, temp: number) {
 
 export function createQuizPrompt(char: string, formattedChat: string) {
   const combinedPrompt =
-    `Create a quiz based on the conversation below between a user and the ${char}. Generate 5 MCQ question in the following format where Q: represents Question; A, B, C and D represents the options to choose from; and the answer is given in the following format Answer: A/B/C/D. Please keep the answers short. The options are one line apart and start one line after the question. The answer starts one line after the last option. A new question starts two line after the answer to the last question. Do not add anything other messages or acknowlegements\n` +
+    `Create a quiz based on the conversation below between a user and the ${char}. Generate 5 MCQ question in the following format where Q: represents Question; A, B, C and D represents the options to choose from; and the answer is given in the following format Answer: A/B/C/D. Please keep the answers short and randomise the answers. The options are one line apart and start one line after the question. The answer starts one line after the last option. A new question starts two line after the answer to the last question. Do not add anything other messages or acknowlegements\n` +
     formattedChat;
-  return combinedPrompt;
+    return combinedPrompt;
 }
