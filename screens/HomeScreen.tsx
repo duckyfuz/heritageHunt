@@ -45,12 +45,12 @@ const HomeScreen = () => {
       console.log("Permission to access location was denied");
       return;
     }
-    const newLocation = await Location.getCurrentPositionAsync({});
+    // const newLocation = await Location.getCurrentPositionAsync({});
     setLocation({
-      latitude: newLocation.coords.latitude,
-      longitude: newLocation.coords.longitude,
-      // latitude: 1.27934,
-      // longitude: 103.84212,
+      // latitude: newLocation.coords.latitude,
+      // longitude: newLocation.coords.longitude,
+      latitude: 1.2976,
+      longitude: 103.854,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });

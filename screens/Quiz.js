@@ -6,6 +6,7 @@ import {
   ProgressBar,
   MD3Colors,
   Avatar,
+  IconButton,
 } from "react-native-paper";
 import heritageHuntLogo from "./QuizQuestions/logo.png";
 
@@ -195,27 +196,57 @@ function QuizScreen({ route }) {
             }}
           >
             {currentOption.map((currentOption, index) => (
-              <Button
-                // Change the style of button to buttonWrong/buttonCorrect if it is correct
-                style={
+              // <Button
+              //   // Change the style of button to buttonWrong/buttonCorrect if it is correct
+              //   style={
+              //     !answerCompleted
+              //       ? styles.button1
+              //       : answerCompleted && answerIndex === index
+              //       ? styles.button2
+              //       : styles.button1
+              //   }
+              //   labelStyle={styles.button1Text}
+              //   contentStyle={{ justifyContent: "flex-start" }}
+              //   key={index}
+              //   id={`btn${index}`}
+              //   onPress={() => {
+              //     if (!answerCompleted) {
+              //       handleSelectOption(currentOption, index);
+              //     }
+              //   }}
+              // >
+              //   <Text>{currentOption}</Text>
+              // </Button>
+              <IconButton
+                key={index}
+                style={[
+                  { width: "95%", maxHeight: "100%" },
                   !answerCompleted
                     ? styles.button1
                     : answerCompleted && answerIndex === index
                     ? styles.button2
-                    : styles.button1
-                }
+                    : styles.button1,
+                ]}
                 labelStyle={styles.button1Text}
                 contentStyle={{ justifyContent: "flex-start" }}
-                key={index}
-                id={`btn${index}`}
+                icon={() => (
+                  <Text
+                    style={{
+                      width: "90%",
+                      textAlign: "left",
+                      marginHorizontal: 4,
+                    }}
+                    numberOfLines={2}
+                  >
+                    {currentOption}
+                  </Text>
+                )}
                 onPress={() => {
                   if (!answerCompleted) {
                     handleSelectOption(currentOption, index);
                   }
                 }}
-              >
-                {currentOption}
-              </Button>
+              />
             ))}
           </Card.Actions>
         </Card>

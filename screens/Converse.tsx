@@ -75,7 +75,7 @@ const Converse = ({ route, navigation }: any) => {
       content:
         "Please reply to the following question or statement as if you were an actor playing the character of " +
         route.params.character.name +
-        ":\n" +
+        ":\nKeep your reply short.\n" +
         userMessage.text,
     });
 
