@@ -189,10 +189,10 @@ function QuizScreen({ route }) {
           <Card.Actions
             style={{
               flexDirection: "column",
-              rowGap: 20,
+              rowGap: 8,
               width: "100%",
               alignItems: "stretch",
-              marginBottom: 10,
+              marginBottom: 5,
             }}
           >
             {currentOption.map((currentOption, index) => (
@@ -220,7 +220,11 @@ function QuizScreen({ route }) {
               <IconButton
                 key={index}
                 style={[
-                  { width: "95%", maxHeight: "100%" },
+                  {
+                    width: "95%",
+                    padding: 5,
+                    height: Math.ceil(currentOption.length / 39) * 40,
+                  },
                   !answerCompleted
                     ? styles.button1
                     : answerCompleted && answerIndex === index
@@ -234,11 +238,11 @@ function QuizScreen({ route }) {
                     style={{
                       width: "90%",
                       textAlign: "left",
-                      marginHorizontal: 4,
                     }}
-                    numberOfLines={2}
+                    // numberOfLines={4}
                   >
                     {currentOption}
+                    {/* 1234567890123456789012345678901234567890 */}
                   </Text>
                 )}
                 onPress={() => {
