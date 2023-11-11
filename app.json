@@ -16,9 +16,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "config": {
-        "googleMapsApiKey": ""
-      },
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
@@ -66,6 +63,12 @@
       "eas": {
         "projectId": "9394acdb-a8ed-4a91-aff7-dfae05df6858"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9394acdb-a8ed-4a91-aff7-dfae05df6858"
     }
   }
 }
