@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { artifactsHash } from "../../utils/artifactsHash";
 
 export default function ScanScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const [hasPermission, setHasPermission] = useState<Boolean | null>(null);
   const [scanned, setScanned] = useState(false);
@@ -20,13 +21,14 @@ export default function ScanScreen() {
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = (
-    { type, data }: any // Don't be lazy edit the type here later also
-  ) => {
+  const handleBarCodeScanned = ({ data }: any) => {
     setScanned(true);
     if (data in artifactsHash) {
       navigation.navigate("Converse", { character: artifactsHash[data] });
-    } // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    } else {
+      setScanned(false);
+      return;
+    }
   };
 
   if (hasPermission === null) {

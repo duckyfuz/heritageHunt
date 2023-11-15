@@ -25,7 +25,8 @@ import {
   requestPlacesAPI,
 } from "../utils/routeHelpers";
 
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const Route = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
@@ -33,7 +34,7 @@ const Route = () => {
   const [distance, setDistance] = useState<number>(800);
   const [time, setTime] = useState<number>(120);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
 
   const fetchLocation = async () => {

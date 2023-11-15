@@ -20,7 +20,8 @@ import * as Location from "expo-location";
 
 import * as MapStyle from "../utils/mapStyle.json";
 import { LocationObject, MarkerObject } from "../utils/routeHelpers";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import {
   BottomSheetModal,
@@ -32,7 +33,8 @@ import { useSelector } from "react-redux";
 import { selectPOIs, selectWPs } from "../app/features/counter/counterSlice";
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
   const waypoints = useSelector(selectWPs);
   const POIs = useSelector(selectPOIs);
 
@@ -65,10 +67,8 @@ const HomeScreen = () => {
     };
   }, []);
 
-  // Bottom Sheet Ref
+  // Bottom Sheet Ref and snap variables
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  // Botton Sheet snap variables
   const snapPoints = useMemo(() => ["25%", "50%"], []);
 
   // Callbacks for Bottom Sheet
@@ -77,10 +77,9 @@ const HomeScreen = () => {
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
-    // setPOI(null);
   }, []);
 
-  const handlePoiClick = (e: SyntheticEvent) => {
+  const handlePoiClick = (e: any) => {
     console.log(e.nativeEvent);
     console.log(e._targetInst.memoizedProps);
     const marker: MarkerObject = {
@@ -125,19 +124,7 @@ const HomeScreen = () => {
     coordinates,
   }) => {
     return (
-      <Polyline
-        coordinates={coordinates}
-        strokeColor="#000"
-        // strokeColors={[
-        //   "#7F0000",
-        //   "#00000000",
-        //   "#B24112",
-        //   "#E5845C",
-        //   "#238C23",
-        //   "#7F0000",
-        // ]}
-        strokeWidth={3}
-      />
+      <Polyline coordinates={coordinates} strokeColor="#000" strokeWidth={3} />
     );
   };
 
@@ -203,7 +190,6 @@ const HomeScreen = () => {
                   title={marker.title}
                   description={marker.description}
                   onPress={(e) => {
-
                     handlePoiClick(e);
                   }}
                 />
