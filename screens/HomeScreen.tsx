@@ -1,5 +1,4 @@
 import React, {
-  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -104,6 +103,7 @@ const HomeScreen = () => {
           style={styles.fab}
           onPress={() => {
             console.log(location);
+            // @ts-ignore
             _mapView.animateToRegion(location, 500);
             console.log(waypoints);
           }}
@@ -160,14 +160,12 @@ const HomeScreen = () => {
           <MapView
             style={styles.map}
             ref={(ref) => {
+              // @ts-ignore
               _mapView = ref;
             }}
             provider={PROVIDER_GOOGLE}
             customMapStyle={MapStyle}
             initialRegion={location}
-            // onPoiClick={(e) => {
-            //   handlePoiClick(e);
-            // }}
           >
             <Circle
               center={location}
@@ -176,7 +174,7 @@ const HomeScreen = () => {
               strokeColor={"#1a66ff"}
               fillColor={"rgba(65, 104, 187, 0.5)"}
             />
-            {waypoints.map((coordinateSet, index) => (
+            {waypoints.map((coordinateSet: number[][], index: number) => (
               <PolylineComponent
                 key={index}
                 coordinates={mapToLatLng(coordinateSet)}
