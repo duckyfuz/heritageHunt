@@ -1,8 +1,8 @@
 # HeritageHunt: Uncovering Singapore’s Multicultural Roots
 
 ## Demonstration
-To try out the prototype, simply download the Expo Go app and scan the following QR code:
-![ffe43ba7](https://github.com/duckyfuz/heritageHunt-SplashAwards2023/assets/108561447/ddad8e4e-2d3d-4552-a821-86cbc41a638c)
+To try out the prototype, simply download the Expo Go app and scan the following QR code:  
+![ffe43ba7](https://github.com/duckyfuz/heritageHunt-SplashAwards2023/assets/108561447/ddad8e4e-2d3d-4552-a821-86cbc41a638c)  
 or click on this link on your mobile device! exp://u.expo.dev/update/22453bcc-10a8-4f22-b6dc-2de0a4be8268
 
 ## Abstract
