@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import {
-  Card,
-  Button,
-  ProgressBar,
-  MD3Colors,
-  Avatar,
-  IconButton,
-} from "react-native-paper";
+import { Card, Button, Avatar, IconButton } from "react-native-paper";
 import heritageHuntLogo from "./QuizQuestions/logo.png";
 
 function QuizScreen({ route }) {
-  // Access passedQuizOutput from route.params
   const passedQuizOutput = route.params?.passedQuizOutput || "";
   const [questionNumber, setQuestionNumber] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState("");
@@ -24,16 +16,10 @@ function QuizScreen({ route }) {
 
   const [buttonColor, setButtonColor] = useState("");
 
-  // Use useEffect to update currentQuestion and currentOption when passedQuizOutput changes
   useEffect(() => {
     if (passedQuizOutput && passedQuizOutput.length > 0) {
       const currentQuestionNumber = questionNumber + 1;
-      setCurrentQuestion(
-        replaceFirstWord(
-          passedQuizOutput[questionNumber].question,
-          `Q${currentQuestionNumber}:`
-        )
-      );
+      setCurrentQuestion(replaceFirstWord(passedQuizOutput[questionNumber].question, `Q${currentQuestionNumber}:`));
       setCurrentOption(passedQuizOutput[questionNumber].options);
     }
   }, [passedQuizOutput, questionNumber]);
@@ -42,12 +28,9 @@ function QuizScreen({ route }) {
 
     if (words.length >= 2) {
       words[0] = newFirstWord;
-
       const newString = words.join(" ");
-
       return newString;
     } else {
-      // If there are less than two words, simply return the new first word
       return newFirstWord;
     }
   }
@@ -58,7 +41,7 @@ function QuizScreen({ route }) {
       console.log("Question:", quizItem.question);
       console.log("Options:", quizItem.options);
       console.log("Answer:", quizItem.answer);
-      console.log("\n"); // Add a newline for readability
+      console.log("\n");
     });
 
     console.log(selectedOption);
@@ -69,13 +52,9 @@ function QuizScreen({ route }) {
       setIsAnswerCorrect("Correct!");
       let currentScore = scoreCounter;
       setScoreCounter((currentScore += 1));
-      //set button to green
       setButtonColor("#38eb91");
     } else {
-      setIsAnswerCorrect(
-        `Incorrect, the correct answer is ${passedQuizOutput[questionNumber].answer}`
-      );
-      //set button to red
+      setIsAnswerCorrect(`Incorrect, the correct answer is ${passedQuizOutput[questionNumber].answer}`);
       setButtonColor("#ed4554");
     }
 
@@ -130,11 +109,7 @@ function QuizScreen({ route }) {
           flexWrap: "wrap",
         }}
       >
-        <Avatar.Image
-          size={75}
-          source={heritageHuntLogo}
-          style={{ padding: 0 }}
-        />
+        <Avatar.Image size={75} source={heritageHuntLogo} style={{ padding: 0 }} />
         <View
           style={{
             backgroundColor: isAnswerCorrect === "Correct!" ? "green" : "red",
@@ -168,21 +143,16 @@ function QuizScreen({ route }) {
           marginRight: 10,
         }}
       >
-        <Text
-          variant="displayLarge"
-          style={{ fontSize: 26, fontWeight: "bold" }}
-        >
+        <Text variant="displayLarge" style={{ fontSize: 26, fontWeight: "bold" }}>
           {currentQuestion}
         </Text>
       </View>
-      {/*MCQ Options */}
+
+      {/* MCQ Options */}
       <View style={{ flex: 6, marginHorizontal: 10 }}>
         <Card>
           <Card.Content>
-            <Text
-              variant="titleLarge"
-              style={{ fontSize: 18, fontWeight: "bold", color: "#6b6868" }}
-            >
+            <Text variant="titleLarge" style={{ fontSize: 18, fontWeight: "bold", color: "#6b6868" }}>
               Select one
             </Text>
           </Card.Content>
@@ -196,27 +166,6 @@ function QuizScreen({ route }) {
             }}
           >
             {currentOption.map((currentOption, index) => (
-              // <Button
-              //   // Change the style of button to buttonWrong/buttonCorrect if it is correct
-              //   style={
-              //     !answerCompleted
-              //       ? styles.button1
-              //       : answerCompleted && answerIndex === index
-              //       ? styles.button2
-              //       : styles.button1
-              //   }
-              //   labelStyle={styles.button1Text}
-              //   contentStyle={{ justifyContent: "flex-start" }}
-              //   key={index}
-              //   id={`btn${index}`}
-              //   onPress={() => {
-              //     if (!answerCompleted) {
-              //       handleSelectOption(currentOption, index);
-              //     }
-              //   }}
-              // >
-              //   <Text>{currentOption}</Text>
-              // </Button>
               <IconButton
                 key={index}
                 style={[
@@ -258,7 +207,6 @@ function QuizScreen({ route }) {
         {/* Only toggle view when answer is completed */}
         {answerCompleted ? (
           <React.Fragment>
-            {/* Question feedback */}
             <View
               style={{
                 flex: 1,
@@ -276,7 +224,6 @@ function QuizScreen({ route }) {
               >{`Your Answer is ${isAnswerCorrect}!`}</Text>
             </View>
             {!endQuiz ? (
-              //Submit Button
               <View
                 style={{
                   flex: 1,
@@ -292,7 +239,6 @@ function QuizScreen({ route }) {
                 </Button>
               </View>
             ) : (
-              //End page screen
               <React.Fragment>
                 <View
                   style={{
@@ -349,7 +295,6 @@ function QuizScreen({ route }) {
             )}
           </React.Fragment>
         ) : null}
-        {/*Feedback on the Answer */}
       </View>
     </View>
   );

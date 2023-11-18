@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import {
-  Text,
-  FAB,
-  Button,
-  ActivityIndicator,
-  TextInput,
-} from "react-native-paper";
+import { Text, FAB, Button, ActivityIndicator, TextInput } from "react-native-paper";
 
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { ScrollView } from "react-native-gesture-handler";
@@ -19,6 +13,7 @@ import { setWPs, setPOIs } from "../app/features/counter/counterSlice";
 import * as MapStyle from "../utils/mapStyle.json";
 import {
   LocationObject,
+  LocationWaypoints,
   MarkerObject,
   createDetailedRoute,
   createRouteHandler,
@@ -74,9 +69,7 @@ const Route = () => {
       description: e.nativeEvent.placeId,
       image: undefined,
     };
-    setMarkers(
-      Array.from(markers ? new Set([...markers, marker]) : new Set([marker]))
-    );
+    setMarkers(Array.from(markers ? new Set([...markers, marker]) : new Set([marker])));
   };
 
   const suggestPOIs = async () => {
@@ -84,9 +77,7 @@ const Route = () => {
       const newMarkers = await requestPlacesAPI(location, distance);
       setMarkers((prevMarkers) => {
         const uniqueNewMarkers = newMarkers.filter((newMarker) => {
-          return !prevMarkers.some(
-            (prevMarker) => prevMarker.description === newMarker.description
-          );
+          return !prevMarkers.some((prevMarker) => prevMarker.description === newMarker.description);
         });
         return [...prevMarkers, ...uniqueNewMarkers];
       });
@@ -121,9 +112,8 @@ const Route = () => {
 
   const createRoute = () => {
     (async () => {
-      const waypoints = await createRouteHandler(location, markers, time);
-      const routeWaypoints = await createDetailedRoute(waypoints);
-      // console.log(routeWaypoints);
+      const waypoints = await createRouteHandler(location as LocationObject, markers, time);
+      const routeWaypoints = await createDetailedRoute(waypoints as LocationWaypoints);
 
       console.log(waypoints);
       console.log(markers);
@@ -154,12 +144,14 @@ const Route = () => {
           style={styles.fab}
           onPress={() => {
             console.log(location);
+            // @ts-ignore
             _mapView.animateToRegion(location, 500);
           }}
         />
         <MapView
           style={styles.map}
           ref={(ref) => {
+            // @ts-ignore
             _mapView = ref;
           }}
           provider={PROVIDER_GOOGLE}
@@ -172,12 +164,7 @@ const Route = () => {
         >
           {markers?.map((marker: MarkerObject, index: number) => {
             return (
-              <Marker
-                key={index}
-                coordinate={marker.latlng}
-                title={marker.title}
-                description={marker.description}
-              />
+              <Marker key={index} coordinate={marker.latlng} title={marker.title} description={marker.description} />
             );
           })}
           <Circle
@@ -221,11 +208,7 @@ const Route = () => {
           <Button mode="contained-tonal" onPress={suggestPOIs}>
             Suggest POIs
           </Button>
-          <Button
-            disabled={markers.length === 0 ? true : false}
-            mode="contained"
-            onPress={createRoute}
-          >
+          <Button disabled={markers.length === 0 ? true : false} mode="contained" onPress={createRoute}>
             Create Route
           </Button>
         </View>

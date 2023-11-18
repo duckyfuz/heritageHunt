@@ -14,25 +14,22 @@ type MarkerObject = {
   image: number | ImageURISource | undefined;
 };
 
-type LocationWaypoints = [[number, number]];
+export type LocationWaypoints = [[number, number]];
 
 type ImageURISource = { uri?: string | undefined };
 
 const requestPlacesAPI = async (location: LocationObject, distance: number) => {
   try {
-    const response = await axios.get(
-      "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-      {
-        params: {
-          location: `${location.latitude},${location.longitude}`,
-          radius: distance,
-          type: "point_of_interest",
-          keyword: "historical", // Might want to personalise this
-          key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-          opennow: true,
-        },
-      }
-    );
+    const response = await axios.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", {
+      params: {
+        location: `${location.latitude},${location.longitude}`,
+        radius: distance,
+        type: "point_of_interest",
+        keyword: "historical", // Might want to personalise this
+        key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+        opennow: true,
+      },
+    });
 
     if (response.data.status === "OK") {
       const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
@@ -86,18 +83,12 @@ const markerToShipments = (markersArray: Array<MarkerObject>) => {
 function generateGoogleMapsURL(coordinates: [number, number][]): string {
   const baseUrl = "https://www.google.com/maps/dir/";
 
-  const waypoints = coordinates
-    .map((coord) => coord.reverse().join(","))
-    .join("/");
+  const waypoints = coordinates.map((coord) => coord.reverse().join(",")).join("/");
 
   return `${baseUrl}${waypoints}/@${coordinates[0][1]},${coordinates[0][0]},15z/data=!3m1!4b1!4m2!4m1!3e2`;
 }
 
-const createRouteHandler = async (
-  location: LocationObject,
-  markers: MarkerObject[],
-  time: number
-) => {
+const createRouteHandler = async (location: LocationObject, markers: MarkerObject[], time: number) => {
   const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
   const apiUrl = "https://api.geoapify.com/v1/routeplanner";
 
@@ -148,20 +139,17 @@ const createDetailedRoute = async (waypoints: LocationWaypoints) => {
 
   const formattedWaypoints = requestBody.map((waypoint) => waypoint.join(","));
   const mode = "walk";
-  const apiUrl = `https://api.geoapify.com/v1/routing?waypoints=${formattedWaypoints.join(
-    "|"
-  )}&mode=${mode}&apiKey=${process.env.REACT_APP_GEOAPIFY_API_KEY}`;
+  const apiUrl = `https://api.geoapify.com/v1/routing?waypoints=${formattedWaypoints.join("|")}&mode=${mode}&apiKey=${
+    process.env.REACT_APP_GEOAPIFY_API_KEY
+  }`;
 
   try {
     const response = await axios.get(apiUrl);
 
     // Handle the response data here
-    const tmp: [LocationWaypoints] =
-      response.data.features[0].geometry.coordinates;
+    const tmp: [LocationWaypoints] = response.data.features[0].geometry.coordinates;
 
-    const detailedWaypoints = tmp.map((coordinates) =>
-      coordinates.map((coord) => [coord[1], coord[0]])
-    );
+    const detailedWaypoints = tmp.map((coordinates) => coordinates.map((coord) => [coord[1], coord[0]]));
 
     // console.log(detailedWaypoints);
 
@@ -173,10 +161,4 @@ const createDetailedRoute = async (waypoints: LocationWaypoints) => {
   }
 };
 
-export {
-  LocationObject,
-  MarkerObject,
-  requestPlacesAPI,
-  createRouteHandler,
-  createDetailedRoute,
-};
+export { LocationObject, MarkerObject, requestPlacesAPI, createRouteHandler, createDetailedRoute };
