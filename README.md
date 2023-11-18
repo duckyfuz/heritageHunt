@@ -4,7 +4,7 @@
 To try out the prototype, simply download the Expo Go app and scan the following QR code:  
 ![ffe43ba7](https://github.com/duckyfuz/heritageHunt-SplashAwards2023/assets/108561447/ddad8e4e-2d3d-4552-a821-86cbc41a638c)  
 
-or click on this link on your mobile device! exp://u.expo.dev/update/22453bcc-10a8-4f22-b6dc-2de0a4be8268
+or click on this link on your mobile device! [Expo Link](exp://u.expo.dev/update/22453bcc-10a8-4f22-b6dc-2de0a4be8268)
 
 ## Abstract
 Singapore’s multicultural heritage is a cornerstone of its unique identity, but there is growing concern that younger generations are losing touch with their roots, risking the erosion of this diverse identity. HeritageHunt is an innovative project aimed at reconnecting Singaporeans with their heritage by blending virtual and physical experiences. This project utilizes cutting-edge technology and gamification to make cultural preservation engaging and interactive. In this article, we will explore how HeritageHunt addresses the challenges of preserving multicultural roots and promoting cultural awareness, education, and social cohesion.
