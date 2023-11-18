@@ -59,17 +59,13 @@ const Converse = ({ route, navigation }: any) => {
           },
         };
         setMessages((prevMessages) =>
-          GiftedChat.append(prevMessages, banReply)
+          GiftedChat.append(prevMessages, banReply as never)
         );
         return;
       }
     }
 
-    const chronoMessages = giftedToGPT(
-      messages,
-      route.params.character.prompt,
-      route.params.character.name
-    );
+    const chronoMessages = giftedToGPT(messages, route.params.character.prompt);
     chronoMessages.push({
       role: "user",
       content:
@@ -92,7 +88,9 @@ const Converse = ({ route, navigation }: any) => {
       },
     };
 
-    setMessages((prevMessages) => GiftedChat.append(prevMessages, GPTMessage));
+    setMessages((prevMessages) =>
+      GiftedChat.append(prevMessages, GPTMessage as never)
+    );
   };
 
   const handleStartQuiz = async () => {
@@ -106,7 +104,7 @@ const Converse = ({ route, navigation }: any) => {
       const response = await callGPT(message, 1000, 0.1);
 
       const answer = response.data.choices[0].message.content;
-      const lines = answer.split("\n").filter((line) => line !== "");
+      const lines = answer.split("\n").filter((line: string) => line !== "");
 
       let quizData = [];
       for (let i = 0; i < 25; i += 6) {
@@ -145,7 +143,7 @@ const Converse = ({ route, navigation }: any) => {
       ) : (
         <GiftedChat
           messages={messages}
-          onSend={(newMessages) => handleSend(newMessages)}
+          onSend={(newMessages) => handleSend(newMessages as never)}
           user={{
             _id: 1,
             name: "user",
